@@ -1,5 +1,5 @@
 # Credentials
-credentials/mysql_connection_string.py
+credentials/mysql_connection_string
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
