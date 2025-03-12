@@ -1,5 +1,4 @@
 from flask import Flask
-import mysql_db
 
 app = Flask(__name__)
 

@@ -1,5 +1,6 @@
 import mysql.connector
-import mysql_connection_string
+from credentials import mysql_connection_string
+
 
 def execute_proc(sql: str) -> str:
     conn = mysql.connector.connect(**mysql_connection_string.config)
