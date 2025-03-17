@@ -32,26 +32,32 @@ def logout():
 
 
 def get_user(data) -> dict:
-    user = mysql_db.get_user_by_username(data['username'])
-    if user is None:
-        response = {'status': 'User does not exist'}
-    elif check_password_hash(user['password'], data['password']):
-        response = {'status': 'Incorrect password'}
-    else:
-        session.clear()
-        session['user_id'] = user['user_id']
-        response = {
-            'username': user['username'],
-            'favoriteTeam': user['favoriteTeam'],
-            'notificationPreference': user['notification_pref'],
-            'emailAddress': user['email_address'],
-            'phone': user['phone']
-        }
-    return response
+    try:
+        user = mysql_db.get_user_by_username(data['username'])
+    
+        if user is None:
+            response_status = jsonify({"error": "Not Found", "message": "No users found associated to the provided username."}), 406
+        elif check_password_hash(user['password'], data['password']):
+            response_status = ({"error": "Incorrect username or password", "message": "Incorrect Username or Password"}), 406
+        else:
+            session.clear()
+            session['user_id'] = user['user_id']
+            response_status = jsonify({
+                'username': user['username'],
+                'favoriteTeam': user['favoriteTeam'],
+                'notificationPreference': user['notification_pref'],
+                'emailAddress': user['email_address'],
+                'phone': user['phone']
+            }), 200
+
+    except Exception as e:
+        response_status = jsonify({"error": "Request Error", "message": f"{e}"}), 400
+    return response_status
 
 
 def create_user(data) -> str:
-    sql_statement = (f"""CALL PROC_CREATE_USER(
+    try:
+        sql_statement = (f"""CALL PROC_CREATE_USER(
                             '{data["username"]}',
                             '{generate_password_hash(data["password"])}', 
                             '{data["favorite_team"]}', 
@@ -60,5 +66,13 @@ def create_user(data) -> str:
                             '{data["phone_number"]}', 
                             @status);
                         """)
-    procedure_status = mysql_db.execute_proc(sql_statement)
+        procedure_status = mysql_db.execute_proc(sql_statement)
+
+        if procedure_status != 'Success':
+            response_status = jsonify(message = "Success"), 200
+        else:
+            response_status = jsonify({"error": "New user not created", "message": f"{procedure_status}"}), 400
+    except Exception as e:
+        response_status = jsonify({"error": "New user not created", "message": f"{e}"}), 400
+
     return procedure_status
