@@ -5,8 +5,9 @@ from . import mysql_db
 bp = Blueprint('user', __name__, url_prefix='/user')
 
 
-@bp.post('/update-email/<str:userID>')
-def update_user_email(data) -> dict:
+@bp.post('/update-email')
+def update_user_email() -> dict:
+    data = request.json
     try:
         procedure_output = sql_update_user_email(data)
         if procedure_output == 'Status':
@@ -17,8 +18,9 @@ def update_user_email(data) -> dict:
         response_status = jsonify({"error": "Email Address not updated", "message": e}), 400
     return response_status
 
-@bp.post('/update-phone/<str:userID>')
-def update_user_phone(data) -> dict:
+@bp.post('/update-phone')
+def update_user_phone() -> dict:
+    data = request.json
     try:
         procedure_output = sql_update_user_phone(data)
         if procedure_output == 'Status':
@@ -29,8 +31,9 @@ def update_user_phone(data) -> dict:
         response_status = jsonify({"error": "Phone not updated", "message": e}), 400
     return response_status
 
-@bp.post('/update-favorite-team/<str:userID>')
-def update_user_favorite_team(data) -> dict:
+@bp.post('/update-favorite-team')
+def update_user_favorite_team() -> dict:
+    data = request.json
     try:
         procedure_output = sql_update_user_favorite_team(data)
         if procedure_output == 'Status':
@@ -41,8 +44,9 @@ def update_user_favorite_team(data) -> dict:
         response_status = jsonify({"error": "Favorite Team not updated", "message": e}), 400
     return response_status
 
-@bp.post('/update-notification-preference/<str:userID>')
-def update_user_notification_preference(data) -> dict:
+@bp.post('/update-notification-preference')
+def update_user_notification_preference() -> dict:
+    data = request.json
     try:
         procedure_output = sql_update_user_notification_preference(data)
         if procedure_output == 'Status':
