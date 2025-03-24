@@ -10,8 +10,8 @@ def update_user_email() -> dict:
     data = request.json
     try:
         procedure_output = sql_update_user_email(data)
-        if procedure_output == 'Status':
-            response_status = jsonify(message = "Success")
+        if procedure_output == 'Success':
+            response_status = jsonify(message = "Success"), 201
         else:
             response_status = jsonify({"error": "Email Address not updated", "message": procedure_output})
     except Exception as e:
@@ -23,8 +23,8 @@ def update_user_phone() -> dict:
     data = request.json
     try:
         procedure_output = sql_update_user_phone(data)
-        if procedure_output == 'Status':
-            response_status = jsonify(message = "Success")
+        if procedure_output == 'Success':
+            response_status = jsonify(message = "Success"), 201
         else:
             response_status = jsonify({"error": "Phone not updated", "message": procedure_output})
     except Exception as e:
@@ -36,8 +36,8 @@ def update_user_favorite_team() -> dict:
     data = request.json
     try:
         procedure_output = sql_update_user_favorite_team(data)
-        if procedure_output == 'Status':
-            response_status = jsonify(message = "Success")
+        if procedure_output == 'Success':
+            response_status = jsonify(message = "Success"), 201
         else:
             response_status = jsonify({"error": "Favorite Team not updated", "message": procedure_output})
     except Exception as e:
@@ -49,8 +49,8 @@ def update_user_notification_preference() -> dict:
     data = request.json
     try:
         procedure_output = sql_update_user_notification_preference(data)
-        if procedure_output == 'Status':
-            response_status = jsonify(message = "Success")
+        if procedure_output == 'Success':
+            response_status = jsonify(message = "Success"), 201
         else:
             response_status = jsonify({"error": "Notification Preference not updated", "message": procedure_output})
     except Exception as e:
