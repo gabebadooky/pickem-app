@@ -7,7 +7,7 @@ bp = Blueprint('picks', __name__, url_prefix='/picks')
 @bp.get('/<str:username>')
 def get_user_picks(username):
     try:
-        sql_statement = f"SELECT * FROM GET_PICKS_VW WHERE USERNAME = '{username}';"
+        sql_statement = f"SELECT * FROM GET_USER_PICKS_VW WHERE USERNAME = '{username}';"
         picks = mysql_db.call_view(sql_statement)
 
         if len(picks) == 0:
