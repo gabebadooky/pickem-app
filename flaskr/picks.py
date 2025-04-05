@@ -5,7 +5,7 @@ from . import mysql_db
 bp = Blueprint('picks', __name__, url_prefix='/picks')
 
 @bp.get('/<str:username>')
-def get_user_picks(username):
+def get_user_picks(username) -> tuple:
     try:
         sql_statement = f"SELECT * FROM GET_USER_PICKS_VW WHERE USERNAME = '{username}';"
         picks = mysql_db.call_view(sql_statement)
@@ -28,7 +28,7 @@ def get_user_picks(username):
 
 
 @bp.post('/submit')
-def submit_pick():
+def submit_pick() -> tuple:
     data = request.json
     try:
         procedure_output = sql_update_pick(data)
@@ -42,7 +42,7 @@ def submit_pick():
 
 
 
-def sql_update_pick(data) -> str:
+def sql_update_pick(data: dict) -> str:
     user_id = data['userID']
     game_id = data['gameID']
     team_picked = data['teamPicked']

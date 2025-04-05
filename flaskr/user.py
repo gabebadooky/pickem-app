@@ -6,7 +6,7 @@ bp = Blueprint('user', __name__, url_prefix='/user')
 
 
 @bp.post('/update-email')
-def update_user_email() -> dict:
+def update_user_email() -> tuple:
     data = request.json
     try:
         procedure_output = sql_update_user_email(data)
@@ -19,7 +19,7 @@ def update_user_email() -> dict:
     return response_status
 
 @bp.post('/update-phone')
-def update_user_phone() -> dict:
+def update_user_phone() -> tuple:
     data = request.json
     try:
         procedure_output = sql_update_user_phone(data)
@@ -32,7 +32,7 @@ def update_user_phone() -> dict:
     return response_status
 
 @bp.post('/update-favorite-team')
-def update_user_favorite_team() -> dict:
+def update_user_favorite_team() -> tuple:
     data = request.json
     try:
         procedure_output = sql_update_user_favorite_team(data)
@@ -45,7 +45,7 @@ def update_user_favorite_team() -> dict:
     return response_status
 
 @bp.post('/update-notification-preference')
-def update_user_notification_preference() -> dict:
+def update_user_notification_preference() -> tuple:
     data = request.json
     try:
         procedure_output = sql_update_user_notification_preference(data)
@@ -59,28 +59,28 @@ def update_user_notification_preference() -> dict:
 
 
 
-def sql_update_user_email(data) -> str:
+def sql_update_user_email(data: dict) -> str:
     user_id = data['userID']
     email_address = data['emailAddress']
     sql_statement = f"CALL PROC_UPDATE_USER_EMAIL('{user_id}', '{email_address}', @status);"
     procedure_output = mysql_db.execute_proc(sql_statement)
     return procedure_output
 
-def sql_update_user_phone(data) -> str:
+def sql_update_user_phone(data: dict) -> str:
     user_id = data['userID']
     phone = data['phone']
     sql_statement = f"CALL PROC_UPDATE_USER_PHONE('{user_id}', '{phone}', @status);"
     procedure_output = mysql_db.execute_proc(sql_statement)
     return procedure_output
 
-def sql_update_user_favorite_team(data) -> str:
+def sql_update_user_favorite_team(data: dict) -> str:
     user_id = data['userID']
     favorite_team = data['favoriteTeam']
     sql_statement = f"CALL PROC_UPDATE_USER_FAVORITE_TEAM('{user_id}', '{favorite_team}', @status);"
     procedure_output = mysql_db.execute_proc(sql_statement)
     return procedure_output
 
-def sql_update_user_notification_preference(data) -> str:
+def sql_update_user_notification_preference(data: dict) -> str:
     user_id = data['userID']
     favorite_team = data['notificationPreference']
     sql_statement = f"CALL PROC_UPDATE_USER_NOTIFICATION_PREFERENCE('{user_id}', '{favorite_team}', @status);"
