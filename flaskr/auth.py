@@ -68,15 +68,14 @@ def create_user(data: dict) -> tuple:
         if user is None:
             sql_statement = conncatenate_create_user_sql(data)
             procedure_status = mysql_db.execute_proc(sql_statement)
-
             if procedure_status != 'Success':
-                response_status = jsonify({"error": "New user not created", "message": f"{procedure_status}"}), 400
+                response_status = jsonify({"error": "New user not created ?", "message": f"{procedure_status}"}), 400
             else:
                 response_status = jsonify(message = "Success"), 200
         else:
             response_status = jsonify(message = f"User {data['username']} already exists!"), 200
     except Exception as e:
-        response_status = jsonify({"error": "New user not created", "message": f"{e}"}), 400
+        response_status = jsonify({"error": "New user not created !", "message": f"{e}"}), 400
     return response_status
 
 
