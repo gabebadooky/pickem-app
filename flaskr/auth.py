@@ -6,6 +6,19 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 @bp.post('/register')
 def register() -> tuple:
+    """
+    Body Example:
+    [
+        {
+            "username": <str>, (REQUIRED)
+            "password": <str>, (REQUIRED)
+            "favoriteTeam": <str>, (optional)
+            "notificationPreference": <str>, (optional)
+            "emailAddress": <str>, (optional)
+            "phone": <str> (optional)
+        }
+    ]
+    """
     data = request.json
     if ('username' in data) and ('password' in data):
         response = create_user(data)
@@ -15,6 +28,15 @@ def register() -> tuple:
 
 @bp.post('/login')
 def login() -> tuple:
+    """
+    Body Example:
+    [
+        {
+            "username": <str>, (REQUIRED)
+            "password": <str> (REQUIRED)
+        }
+    ]
+    """
     data = request.json
     if ('username' in data) and ('password' in data):
         response = get_user(data)

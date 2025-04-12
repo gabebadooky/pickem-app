@@ -7,6 +7,15 @@ bp = Blueprint('user', __name__, url_prefix='/user')
 
 @bp.post('/update-email')
 def update_user_email() -> tuple:
+    """
+    Body Example:
+    [
+        {
+            "userID": <int>, (REQUIRED)
+            "emailAddres": <str> (REQUIRED)
+        }
+    ]
+    """
     data = request.json
     try:
         procedure_output = sql_update_user_email(data)
@@ -20,6 +29,15 @@ def update_user_email() -> tuple:
 
 @bp.post('/update-phone')
 def update_user_phone() -> tuple:
+    """
+    Body Example:
+    [
+        {
+            "userID": <int>, (REQUIRED)
+            "phone": <str> (REQUIRED)
+        }
+    ]
+    """
     data = request.json
     try:
         procedure_output = sql_update_user_phone(data)
@@ -33,6 +51,15 @@ def update_user_phone() -> tuple:
 
 @bp.post('/update-favorite-team')
 def update_user_favorite_team() -> tuple:
+    """
+    Body Example:
+    [
+        {
+            "userID": <int>, (REQUIRED)
+            "favoriteTeam": <str> (REQUIRED)
+        }
+    ]
+    """
     data = request.json
     try:
         procedure_output = sql_update_user_favorite_team(data)
@@ -46,6 +73,15 @@ def update_user_favorite_team() -> tuple:
 
 @bp.post('/update-notification-preference')
 def update_user_notification_preference() -> tuple:
+    """
+    Body Example:
+    [
+        {
+            "userID": <int>, (REQUIRED)
+            "notificationPreference": <str> (REQUIRED)
+        }
+    ]
+    """
     data = request.json
     try:
         procedure_output = sql_update_user_notification_preference(data)
