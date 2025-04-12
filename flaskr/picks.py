@@ -3,6 +3,7 @@ from . import mysql_db
 
 bp = Blueprint('picks', __name__, url_prefix='/picks')
 
+
 @bp.get('/<username>')
 def get_user_picks(username) -> tuple:
     try:
@@ -33,15 +34,34 @@ def get_user_picks(username) -> tuple:
 
 @bp.post('/submit')
 def submit_pick() -> tuple:
+    """
+    Body Example:
+    [
+        {
+            "userID": <int>, (REQUIRED)
+            "gameID": <str>, (REQUIRED)
+            "teamPicked": <str>, (REQUIRED)
+            "pickWeight": <str> (REQUIRED)
+        }
+    ]
+    """
     data = request.json
+    print('here1')
     try:
-        procedure_output = sql_update_pick(data)
-        if procedure_output == 'Success':
-            response_status = jsonify(message = "Success"), 201
+        print('here2')
+        if ('userID' not in data) and ('gameID' not in data) and ('teamPicked' not in data) and ('pickWeight' not in data):
+            response_status = jsonify({"error": "Required parameter missing from request", "message": "Required parameters: userID, gameID, teamPicked, pickWeight"})
         else:
-            response_status = jsonify({"error": f"Pick {data['pick']} not updated", "message": procedure_output}), 400
+            print('here3')
+            procedure_output = sql_update_pick(data)
+            print('here4')
+            if procedure_output == 'Success':
+                response_status = jsonify(message = "Success"), 201
+            else:
+                response_status = jsonify({"error": f"Pick not updated", "message": procedure_output}), 400
+            print('here5')
     except Exception as e:
-        response_status = jsonify({"error": f"Pick {data['pick']} not updated", "message": procedure_output}), 400
+        response_status = jsonify({"error": f"Pick not updated!", "message": procedure_output}), 400
     return response_status
 
 
