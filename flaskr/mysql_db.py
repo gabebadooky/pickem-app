@@ -7,7 +7,6 @@ def execute_proc(sql: str) -> str:
     cursor = conn.cursor()
     cursor.execute(sql)
     status = cursor.fetchone()[0]
-    conn.commit()
     cursor.close()
     conn.close()
     return status
@@ -18,7 +17,6 @@ def call_view(sql: str) -> list:
     cursor = conn.cursor(dictionary=True)
     cursor.execute(sql)
     results = cursor.fetchall()
-    conn.commit()
     cursor.close()
     conn.close()
     return results
@@ -29,7 +27,6 @@ def get_user_by_username(username: str) -> dict:
     cursor = conn.cursor(dictionary=True)
     cursor.execute(sql)
     user = cursor.fetchone()
-    conn.commit()
     cursor.close()
     conn.close()
     return user

@@ -42,10 +42,9 @@ def logout():
 def get_user(data: dict) -> tuple:
     try:
         user = mysql_db.get_user_by_username(data['username'])
-        print(check_password_hash(generate_password_hash(data['password']), user['PWDHASH']))
         if user is None:
             response_status = jsonify({"error": "Not Found", "message": "No users found associated to the provided username."}), 406
-        elif check_password_hash(generate_password_hash(data['password'], 'pbkdf2:sha256', 16), user['PWDHASH']):
+        elif check_password_hash(user['PWDHASH'], data['password']):
             session.clear()
             session['user_id'] = user['USER_ID']
             response_status = jsonify({
@@ -58,7 +57,10 @@ def get_user(data: dict) -> tuple:
         else:
             response_status = ({"error": "Incorrect username or password", "message": "Incorrect Username or Password"}), 406
     except Exception as e:
-        response_status = jsonify({"error": "Request Error", "message": f"{e}"}), 400
+        if e == "'NoneType' object is not subscriptable'":
+            response_status = jsonify({"error": "Not Found!", "message": "No users found associated to the provided username."}), 406
+        else:
+            response_status = jsonify({"error": "Request Error", "message": f"{e}"}), 400
     return response_status
 
 
