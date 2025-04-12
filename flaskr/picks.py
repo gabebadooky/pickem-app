@@ -1,24 +1,28 @@
 from flask import Blueprint, jsonify, request
-
 from . import mysql_db
 
 bp = Blueprint('picks', __name__, url_prefix='/picks')
 
-@bp.get('/<str:username>')
+@bp.get('/<username>')
 def get_user_picks(username) -> tuple:
     try:
-        sql_statement = f"SELECT * FROM GET_USER_PICKS_VW WHERE USERNAME = '{username}';"
+        sql_statement = f"SELECT * FROM GET_PICKS_VW WHERE USERNAME = '{username}';"
         picks = mysql_db.call_view(sql_statement)
 
         if len(picks) == 0:
             response_status = jsonify({"error": "Not Found", "message": "No picks found associated to the provided username."}), 406
         else:
-            response_status = jsonify({
-                'username': picks['username'],
-                'gameID': picks['game_id'],
-                'teamPicked': picks['team_picked'],
-                'pickWeight': picks['pick_weight']
-            }), 200
+            camel_cased_list = []
+            for x in range(len(picks)):
+                camel_cased_pick = {
+                    'gameID': picks[x]['GAME_ID'],
+                    'teamPicked': picks[x]['TEAM_PICKED'],
+                    'pickWeight': picks[x]['PICK_WEIGHT'],
+                    'username': picks[x]['USERNAME']
+                }
+                camel_cased_list.append(camel_cased_pick)
+            
+            response_status = jsonify(camel_cased_list), 200
     
     except Exception as e:
         response = jsonify({"error": "Request Error", "message": f"{e}"})

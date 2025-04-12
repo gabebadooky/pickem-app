@@ -1,5 +1,5 @@
 import os
-from . import auth
+from . import auth, picks
 from flask import Flask
 from credentials import secret
 
@@ -29,6 +29,7 @@ def create_app(test_config=None):
         pass
 
     app.register_blueprint(auth.bp)
+    app.register_blueprint(picks.bp)
 
     @app.route('/')
     def hello():

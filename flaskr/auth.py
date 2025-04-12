@@ -1,7 +1,6 @@
 from flask import Blueprint, g, jsonify, redirect, request, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
 from . import mysql_db
-from credentials import secret
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
