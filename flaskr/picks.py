@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify, request
+from flask_cors import CORS
 from . import mysql_db
 
 bp = Blueprint('picks', __name__, url_prefix='/picks')
