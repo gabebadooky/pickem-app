@@ -1,5 +1,5 @@
 import os
-from . import auth, picks
+from . import auth, games, teams, picks
 from flask import Flask
 from flask_cors import CORS
 from credentials import secret
@@ -31,6 +31,8 @@ def create_app(test_config=None):
         pass
 
     app.register_blueprint(auth.bp)
+    app.register_blueprint(games.bp)
+    app.register_blueprint(teams.bp)
     app.register_blueprint(picks.bp)
 
     @app.route('/')

@@ -4,7 +4,7 @@ from . import mysql_db
 bp = Blueprint('games', __name__, url_prefix='/games')
 
 @bp.get('/games')
-def get_games(week) -> tuple:
+def get_games() -> tuple:
     try:
         sql_statement = f"SELECT * FROM GET_GAMES_VW;"
         games = mysql_db.call_view(sql_statement)
