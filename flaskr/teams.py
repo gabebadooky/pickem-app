@@ -1,12 +1,12 @@
 from flask import Blueprint, jsonify, request
 from . import mysql_db
 
-bp = Blueprint('games', __name__, url_prefix='/games')
+bp = Blueprint('teams', __name__, url_prefix='/games')
 
-@bp.get('/games')
+@bp.get('/teams')
 def get_games(week) -> tuple:
     try:
-        sql_statement = f"SELECT * FROM GET_GAMES_VW;"
+        sql_statement = f"SELECT * FROM GET_TEAMS_VW;"
         games = mysql_db.call_view(sql_statement)
 
         if len(games) == 0:
@@ -15,23 +15,20 @@ def get_games(week) -> tuple:
             camel_cased_list = []
             for x in range(len(games)):
                 camel_cased_pick = {
-                    "gameID": games[x]["GAME_ID"],
-                    "league": games[x]["LEAGUE"],
-                    "week": games[x]["WEEK"],
-                    "year": games[x]["YEAR"],
+                    "teamID": games[x]["TEAM_ID"],
                     "cbsCode": games[x]["CBS_CODE"],
                     "espnCode": games[x]["ESPN_CODE"],
                     "foxCode": games[x]["FOX_CODE"],
                     "vegasCode": games[x]["VEGAS_CODE"],
-                    "awayTeamID": games[x]["AWAY_TEAM_ID"],
-                    "homeTeamID": games[x]["HOME_TEAM_ID"],
-                    "date": games[x]["DATE"],
-                    "time": games[x]["TIME"],
-                    "tvCoverage": games[x]["TV_COVERAGE"],
-                    "stadium": games[x]["STADIUM"],
-                    "city": games[x]["CITY"],
-                    "state": games[x]["STATE"],
-                    "gameFinished": games[x]["GAME_FINISHED"]
+                    "conferenceCode": games[x]["CONFERENCE_CODE"],
+                    "conferenceName": games[x]["CONFERENCE_NAME"],
+                    "divisionName": games[x]["DIVISION_NAME"],
+                    "teamName": games[x]["TEAM_NAME"],
+                    "teamMascot": games[x]["TEAM_MASCOT"],
+                    "powerConference": games[x]["POWER_CONFERENCE"],
+                    "team_logo_url": games[x]["TEAM_LOGO_URL"],
+                    "primaryColor": games[x]["PRIMARY_COLOR"],
+                    "alternateColor": games[x]["ALTERNATE_COLOR"]
                 }
                 camel_cased_list.append(camel_cased_pick)
             response_status = jsonify(camel_cased_list), 200
