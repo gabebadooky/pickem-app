@@ -38,7 +38,7 @@ def submit_pick() -> tuple:
     Body Example:
     [
         {
-            "userID": <int>, (REQUIRED)
+            "username": <int>, (REQUIRED)
             "gameID": <str>, (REQUIRED)
             "teamPicked": <str>, (REQUIRED)
             "pickWeight": <str> (REQUIRED)
@@ -47,7 +47,7 @@ def submit_pick() -> tuple:
     """
     data = request.json
     try:
-        if ('userID' not in data) and ('gameID' not in data) and ('teamPicked' not in data) and ('pickWeight' not in data):
+        if ('username' not in data) and ('gameID' not in data) and ('teamPicked' not in data) and ('pickWeight' not in data):
             response_status = jsonify({"error": "Required parameter missing from request", "message": "Required parameters: userID, gameID, teamPicked, pickWeight"})
         else:
             procedure_output = sql_update_pick(data)
@@ -63,10 +63,10 @@ def submit_pick() -> tuple:
 
 
 def sql_update_pick(data: dict) -> str:
-    user_id = data['userID']
+    username = data['username']
     game_id = data['gameID']
     team_picked = data['teamPicked']
     pick_weight = data['pickWeight']
-    sql_statement = f"CALL PROC_SUBMIT_PICK({user_id}, '{game_id}', '{team_picked}', '{pick_weight}', @status);"
+    sql_statement = f"CALL PROC_SUBMIT_PICK({username}, '{game_id}', '{team_picked}', '{pick_weight}', @status);"
     procedure_output = mysql_db.execute_proc(sql_statement)
     return procedure_output
