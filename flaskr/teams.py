@@ -26,7 +26,7 @@ def get_teams() -> tuple:
                     "teamName": teams[x]["TEAM_NAME"],
                     "teamMascot": teams[x]["TEAM_MASCOT"],
                     "powerConference": teams[x]["POWER_CONFERENCE"],
-                    "team_logo_url": teams[x]["TEAM_LOGO_URL"],
+                    "teamLogoUrl": teams[x]["TEAM_LOGO_URL"],
                     "primaryColor": teams[x]["PRIMARY_COLOR"],
                     "alternateColor": teams[x]["ALTERNATE_COLOR"],
                     "overallWins": teams[x]["OVERALL_WINS"],

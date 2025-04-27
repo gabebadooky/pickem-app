@@ -3,8 +3,8 @@
 config = {
     #'user': 'root',
     'user': 'gbaduqui',
-    # 'password': 'C-Townpack2013',
-    'password': 'Bluejays2010',
+    'password': 'C-Townpack2013',
+    # 'password': 'Bluejays2010',
     'host': 'localhost',
     'port': 3306,
     'database': 'pickem_db',
