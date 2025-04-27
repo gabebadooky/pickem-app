@@ -47,17 +47,17 @@ def submit_pick() -> tuple:
     """
     data = request.json
     try:
-        if ('username' not in data) and ('gameID' not in data) and ('teamPicked' not in data) and ('pickWeight' not in data):
+        if ('username' not in data) or ('gameID' not in data) or ('teamPicked' not in data) or ('pickWeight' not in data):
             response_status = jsonify({"error": "Required parameter missing from request", "message": "Required parameters: userID, gameID, teamPicked, pickWeight"})
         else:
             procedure_output = sql_update_pick(data)
             if procedure_output == 'Success':
                 response_status = jsonify(message = "Success"), 201
             else:
-                response_status = jsonify({"error": f"Pick not updated", "message": procedure_output}), 400
+                response_status = jsonify({"error": f"Error occurred updating Pick database record!", "message": procedure_output}), 400
             print('here5')
     except Exception as e:
-        response_status = jsonify({"error": f"Pick not updated!", "message": procedure_output}), 400
+        response_status = jsonify({"error": f"Error occurred calling submit endpoint!", "message": e}), 400
     return response_status
 
 
@@ -67,6 +67,6 @@ def sql_update_pick(data: dict) -> str:
     game_id = data['gameID']
     team_picked = data['teamPicked']
     pick_weight = data['pickWeight']
-    sql_statement = f"CALL PROC_SUBMIT_PICK({username}, '{game_id}', '{team_picked}', '{pick_weight}', @status);"
+    sql_statement = f"CALL PROC_SUBMIT_PICK('{username}', '{game_id}', '{team_picked}', '{pick_weight}', @status);"
     procedure_output = mysql_db.execute_proc(sql_statement)
     return procedure_output
