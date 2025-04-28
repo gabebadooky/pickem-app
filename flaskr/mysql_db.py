@@ -5,6 +5,7 @@ from credentials import mysql_connection_string
 def execute_proc(sql: str) -> str:
     conn = mysql.connector.connect(**mysql_connection_string.config)
     cursor = conn.cursor()
+    print(sql)
     cursor.execute(sql)
     status = cursor.fetchone()[0]
     cursor.close()
