@@ -6,7 +6,7 @@ bp = Blueprint('teams', __name__, url_prefix='/teams')
 @bp.get('/')
 def get_teams() -> tuple:
     try:
-        sql_statement = f"SELECT * FROM GET_TEAMS_VW;"
+        sql_statement = f"SELECT * FROM GET_TEAMS_VW WHERE TEAM_ID IS NOT NULL;"
         teams = mysql_db.call_view(sql_statement)
 
         if len(teams) == 0:
