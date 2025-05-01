@@ -1,10 +1,10 @@
 from flask import Blueprint, jsonify, request
 from . import mysql_db
 
-bp = Blueprint('picks', __name__, url_prefix='/picks')
+bp = Blueprint("picks", __name__, url_prefix="/picks")
 
 
-@bp.get('/<username>')
+@bp.get("/<username>")
 def get_user_picks(username) -> tuple:
     try:
         sql_statement = f"SELECT * FROM GET_PICKS_VW WHERE USERNAME = '{username}';"
@@ -16,10 +16,10 @@ def get_user_picks(username) -> tuple:
             camel_cased_list = []
             for x in range(len(picks)):
                 camel_cased_pick = {
-                    'gameID': picks[x]['GAME_ID'],
-                    'teamPicked': picks[x]['TEAM_PICKED'],
-                    'pickWeight': picks[x]['PICK_WEIGHT'],
-                    'username': picks[x]['USERNAME']
+                    "gameID": picks[x]["GAME_ID"],
+                    "teamPicked": picks[x]["TEAM_PICKED"],
+                    "pickWeight": picks[x]["PICK_WEIGHT"],
+                    "username": picks[x]["USERNAME"]
                 }
                 camel_cased_list.append(camel_cased_pick)
             
@@ -32,7 +32,7 @@ def get_user_picks(username) -> tuple:
     return response_status
 
 
-@bp.post('/submit')
+@bp.post("/submit")
 def submit_pick() -> tuple:
     """
     Body Example:
@@ -47,15 +47,14 @@ def submit_pick() -> tuple:
     """
     data = request.json
     try:
-        if ('username' not in data) or ('gameID' not in data) or ('teamPicked' not in data) or ('pickWeight' not in data):
+        if ("username" not in data) or ("gameID" not in data) or ("teamPicked" not in data) or ("pickWeight" not in data):
             response_status = jsonify({"error": "Required parameter missing from request", "message": "Required parameters: userID, gameID, teamPicked, pickWeight"})
         else:
             procedure_output = sql_update_pick(data)
-            if procedure_output == 'Success':
+            if procedure_output == "Success":
                 response_status = jsonify(message = "Success"), 201
             else:
                 response_status = jsonify({"error": f"Error occurred updating Pick database record!", "message": procedure_output}), 400
-            print('here5')
     except Exception as e:
         response_status = jsonify({"error": f"Error occurred calling submit endpoint!", "message": e}), 400
     return response_status
@@ -63,10 +62,10 @@ def submit_pick() -> tuple:
 
 
 def sql_update_pick(data: dict) -> str:
-    username = data['username']
-    game_id = data['gameID']
-    team_picked = data['teamPicked']
-    pick_weight = data['pickWeight']
+    username = data["username"]
+    game_id = data["gameID"]
+    team_picked = data["teamPicked"]
+    pick_weight = data["pickWeight"]
     sql_statement = f"CALL PROC_SUBMIT_PICK('{username}', '{game_id}', '{team_picked}', '{pick_weight}', @status);"
     procedure_output = mysql_db.execute_proc(sql_statement)
     return procedure_output

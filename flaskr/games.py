@@ -1,9 +1,9 @@
 from flask import Blueprint, jsonify
 from . import mysql_db
 
-bp = Blueprint('games', __name__, url_prefix='/games')
+bp = Blueprint("games", __name__, url_prefix="/games")
 
-@bp.get('/')
+@bp.get("/")
 def get_games() -> tuple:
     try:
         sql_statement = f"SELECT * FROM GET_GAMES_VW WHERE GAME_ID IS NOT NULL;"
