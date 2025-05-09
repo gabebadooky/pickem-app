@@ -1,5 +1,6 @@
-from flask import Blueprint, g, jsonify, redirect, request, session, url_for
+from flask import Blueprint, g, jsonify, redirect, request, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
+from flask_jwt_extended import create_access_token
 from . import mysql_db
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")
@@ -70,15 +71,8 @@ def get_user(data: dict) -> tuple:
         if user is None:
             response_status = jsonify({"error": "Not Found", "message": "No users found associated to the provided username."}), 406
         elif check_password_hash(user["PWDHASH"], data["password"]):
-            session.clear()
-            session["user_id"] = user["USER_ID"]
-            response_status = jsonify({
-                "username": user["USERNAME"],
-                "favoriteTeam": user["FAVORITE_TEAM"],
-                "notificationPreference": user["NOTIFICATION_PREF"],
-                "emailAddress": user["EMAIL_ADDRESS"],
-                "phone": user["PHONE"]
-            }), 200
+            access_token = create_access_token(identity=user["USER_ID"])
+            response_status = jsonify(access_token=access_token)
         else:
             response_status = ({"error": "Incorrect username or password", "message": "Incorrect Username or Password"}), 406
     except Exception as e:

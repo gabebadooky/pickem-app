@@ -2,6 +2,7 @@ import os
 from . import auth, games, teams, picks
 from flask import Flask
 from flask_cors import CORS
+from flask_jwt_extended import JWTManager
 from credentials import secret
 
 
@@ -16,6 +17,8 @@ def create_app(test_config=None):
     app.config.from_mapping(
         SECRET_KEY = secret.key
     )
+
+    jwt = JWTManager(app)
 
     if test_config is None:
         # load the instance config, if it exists, when not testing

@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify, request
+from flask_jwt_extended import get_jwt_identity, jwt_required
 from . import mysql_db
 
 bp = Blueprint("picks", __name__, url_prefix="/picks")
@@ -33,6 +34,7 @@ def get_user_picks(username) -> tuple:
 
 
 @bp.post("/submit")
+@jwt_required()
 def submit_pick() -> tuple:
     """
     Body Example:
@@ -46,6 +48,8 @@ def submit_pick() -> tuple:
     ]
     """
     data = request.json
+    #current_user = get_jwt_identity()
+    #print(current_user)
     try:
         if ("username" not in data) or ("gameID" not in data) or ("teamPicked" not in data) or ("pickWeight" not in data):
             response_status = jsonify({"error": "Required parameter missing from request", "message": "Required parameters: userID, gameID, teamPicked, pickWeight"})
