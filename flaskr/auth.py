@@ -1,4 +1,4 @@
-from flask import Blueprint, g, jsonify, redirect, request, url_for
+from flask import Blueprint, g, jsonify, redirect, session, request, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_jwt_extended import create_access_token
 from . import mysql_db
@@ -72,7 +72,7 @@ def get_user(data: dict) -> tuple:
             response_status = jsonify({"error": "Not Found", "message": "No users found associated to the provided username."}), 406
         elif check_password_hash(user["PWDHASH"], data["password"]):
             access_token = create_access_token(identity=user["USER_ID"])
-            response_status = jsonify(access_token=access_token)
+            response_status = jsonify(access_token=access_token), 200
         else:
             response_status = ({"error": "Incorrect username or password", "message": "Incorrect Username or Password"}), 406
     except Exception as e:
@@ -86,41 +86,44 @@ def get_user(data: dict) -> tuple:
 def create_user(data: dict) -> tuple:
     try:
         user = mysql_db.get_user_by_username(data["username"])
+        print(user)
         if user is None:
-            sql_statement = conncatenate_create_user_sql(data)
+            sql_statement = concatenate_create_user_sql(data)
             procedure_status = mysql_db.execute_proc(sql_statement)
             if procedure_status != "Success":
                 response_status = jsonify({"error": "Error occurred calling PROC_CREATE_USER procedure!", "message": f"{procedure_status}"}), 400
             else:
-                response_status = jsonify(message = "Success"), 200
+                user_id = mysql_db.get_user_by_username(data["username"])["USER_ID"]
+                access_token = create_access_token(identity=user_id)
+                response_status = jsonify(access_token=access_token), 200
         else:
-            print(f"User {data["username"]} already exists!")
+            print(f"User {data['username']} already exists!")
             response_status = jsonify(message = f"User already exists!"), 200
     except Exception as e:
         response_status = jsonify({"error": "New user not created !", "message": f"{e}"}), 400
     return response_status
 
 
-def conncatenate_create_user_sql(data: dict) -> str:
+def concatenate_create_user_sql(data: dict) -> str:
     if ("favoriteTeam" not in data):
         favoriteTeam = "NULL"
     else:
-        favoriteTeam = f"'{data["favoriteTeam"]}'"
+        favoriteTeam = f"'{data['favoriteTeam']}'"
 
     if ("notificationPreference" not in data):
         notificationPreference = "NULL"
     else:
-        notificationPreference = f"'{data["notificationPreference"]}'"
+        notificationPreference = f"'{data['notificationPreference']}'"
 
     if ("emailAddress" not in data):
         emailAddress = "NULL"
     else:
-        emailAddress = f"'{data["emailAddress"]}'"
+        emailAddress = f"'{data['emailAddress']}'"
 
     if ("phoneNumber" not in data):
         phoneNumber = "NULL"
     else:
-        phoneNumber = f"'{data["phoneNumber"]}'"
+        phoneNumber = f"'{data['phoneNumber']}'"
 
     sql_statement = (f"""CALL PROC_CREATE_USER(
         '{data["username"]}',

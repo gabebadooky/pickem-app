@@ -48,8 +48,13 @@ def submit_pick() -> tuple:
     ]
     """
     data = request.json
-    #current_user = get_jwt_identity()
-    #print(current_user)
+    print("Here :)")
+    header, payload, signature = request.headers["Authorization"].split(".")
+    print("Header: ", header)
+    print("Payload: ", payload)
+    print("Signature: ", signature)
+    current_user = get_jwt_identity()
+    print(current_user)
     try:
         if ("username" not in data) or ("gameID" not in data) or ("teamPicked" not in data) or ("pickWeight" not in data):
             response_status = jsonify({"error": "Required parameter missing from request", "message": "Required parameters: userID, gameID, teamPicked, pickWeight"})
