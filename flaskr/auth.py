@@ -49,7 +49,7 @@ def login() -> tuple:
         response = jsonify({"error": "Invalid request body!"}), 400
     return response
     
-@bp.before_app_request
+#@bp.before_app_request
 def load_user():
     user_id = session.get("user_id")
     if user_id is None:
@@ -71,7 +71,7 @@ def get_user(data: dict) -> tuple:
         if user is None:
             response_status = jsonify({"error": "Not Found", "message": "No users found associated to the provided username."}), 406
         elif check_password_hash(user["PWDHASH"], data["password"]):
-            access_token = create_access_token(identity=user["USER_ID"])
+            access_token = create_access_token(identity=str(user["USER_ID"]))
             response_status = jsonify(access_token=access_token), 200
         else:
             response_status = ({"error": "Incorrect username or password", "message": "Incorrect Username or Password"}), 406
@@ -94,7 +94,7 @@ def create_user(data: dict) -> tuple:
                 response_status = jsonify({"error": "Error occurred calling PROC_CREATE_USER procedure!", "message": f"{procedure_status}"}), 400
             else:
                 user_id = mysql_db.get_user_by_username(data["username"])["USER_ID"]
-                access_token = create_access_token(identity=user_id)
+                access_token = create_access_token(identity=str(user_id))
                 response_status = jsonify(access_token=access_token), 200
         else:
             print(f"User {data['username']} already exists!")
