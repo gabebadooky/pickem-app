@@ -8,9 +8,9 @@ bp = Blueprint("picks", __name__, url_prefix="/picks")
 @bp.get("/<user_id>")
 def get_user_picks(user_id) -> tuple:
     try:
-        sql_statement = f"SELECT * FROM GET_PICKS_VW WHERE USER_ID = '{user_id}';"
+        sql_statement = f"SELECT * FROM GET_PICKS_VW WHERE USER_ID = {user_id};"
         picks = mysql_db.call_view(sql_statement)
-
+        
         if len(picks) == 0:
             response_status = jsonify({"error": "Not Found", "message": "No picks found associated to the provided username."}), 406
         else:
@@ -29,7 +29,7 @@ def get_user_picks(user_id) -> tuple:
     except Exception as e:
         response = jsonify({"error": "Request Error", "message": f"{e}"})
         response_status = response, 400
-        
+    
     return response_status
 
 
