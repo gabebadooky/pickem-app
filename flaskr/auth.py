@@ -71,6 +71,8 @@ def get_user(data: dict) -> tuple:
         if user is None:
             response_status = jsonify({"error": "Not Found", "message": "No users found associated to the provided username."}), 406
         elif check_password_hash(user["PWDHASH"], data["password"]):
+            user_id = str(user["USER_ID"])
+            print(f"user_id: {user_id}")
             access_token = create_access_token(identity=str(user["USER_ID"]))
             response_status = jsonify(access_token=access_token), 200
         else:
@@ -94,6 +96,7 @@ def create_user(data: dict) -> tuple:
                 response_status = jsonify({"error": "Error occurred calling PROC_CREATE_USER procedure!", "message": f"{procedure_status}"}), 400
             else:
                 user_id = mysql_db.get_user_by_username(data["username"])["USER_ID"]
+                print(f"user_id: {user_id}")
                 access_token = create_access_token(identity=str(user_id))
                 response_status = jsonify(access_token=access_token), 200
         else:
