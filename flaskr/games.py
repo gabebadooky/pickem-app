@@ -35,7 +35,7 @@ def get_games() -> tuple:
                     "cbsHomeSpread": games[x]["CBS_HOME_SPREAD"],
                     "cbsOverUnder": games[x]["CBS_OVER_UNDER"],
                     "cbsAwayWinPercentage": games[x]["CBS_AWAY_WIN_PERCENTAGE"],
-                    #"espnCode": games[x]["ESPN_CODE"],
+                    "espnCode": games[x]["ESPN_CODE"],
                     "espnAwayMoneyline": games[x]["ESPN_AWAY_MONEYLINE"],
                     "espnHomeMoneyline": games[x]["ESPN_HOME_MONEYLINE"],
                     "espnAwaySpread": games[x]["ESPN_AWAY_SPREAD"],
