@@ -5,6 +5,27 @@ from . import mysql_db
 bp = Blueprint("user", __name__, url_prefix="/user")
 
 
+@bp.get("/<user_id>")
+def get_user_properties(user_id) -> tuple:
+    try:
+        user = mysql_db.get_user_by_id(user_id)
+
+        if len(user) == 0:
+            response_status = jsonify({"error": "Not Found", "message": "No Users found associated to the provided User ID."}), 406
+        else:
+            camel_cased_user = {
+                "userID": user["USERNAME"],
+                "userID": user["FAVORITE_TEAM"],
+                "userID": user["NOTIFICATION_PREF"],
+                "userID": user["EMAIL_ADDRESS"],
+                "userID": user["PHONE"]
+            }
+            response_status = jsonify(camel_cased_user), 200
+    except Exception as e:
+        response = jsonify({"error": "Request Error", "message": f"{e}"})
+        response_status = response, 400
+    return response_status
+
 @bp.post("/update-email")
 def update_user_email() -> tuple:
     """
@@ -26,6 +47,7 @@ def update_user_email() -> tuple:
     except Exception as e:
         response_status = jsonify({"error": "Email Address not updated", "message": e}), 400
     return response_status
+
 
 @bp.post("/update-phone")
 def update_user_phone() -> tuple:
@@ -49,6 +71,7 @@ def update_user_phone() -> tuple:
         response_status = jsonify({"error": "Phone not updated", "message": e}), 400
     return response_status
 
+
 @bp.post("/update-favorite-team")
 def update_user_favorite_team() -> tuple:
     """
@@ -70,6 +93,7 @@ def update_user_favorite_team() -> tuple:
     except Exception as e:
         response_status = jsonify({"error": "Favorite Team not updated", "message": e}), 400
     return response_status
+
 
 @bp.post("/update-notification-preference")
 def update_user_notification_preference() -> tuple:

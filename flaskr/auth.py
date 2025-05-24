@@ -44,7 +44,7 @@ def login() -> tuple:
     """
     data = request.json
     if ("username" in data) and ("password" in data):
-        response = get_user(data)
+        response = authenticate_user(data)
     else:
         response = jsonify({"error": "Invalid request body!"}), 400
     return response
@@ -55,7 +55,7 @@ def load_user():
     if user_id is None:
         g.user = None
     else:
-        g.user = mysql_db.get_user_by_id(user_id)
+        g.user = mysql_db.authenticate_user_by_id(user_id)
 
 @bp.route("/logout")
 def logout():
@@ -65,9 +65,9 @@ def logout():
 
 
 
-def get_user(data: dict) -> tuple:
+def authenticate_user(data: dict) -> tuple:
     try:
-        user = mysql_db.get_user_by_username(data["username"])
+        user = mysql_db.authenticate_user_by_username(data["username"])
         if user is None:
             response_status = jsonify({"error": "Not Found", "message": "No users found associated to the provided username."}), 406
         elif check_password_hash(user["PWDHASH"], data["password"]):
@@ -87,7 +87,7 @@ def get_user(data: dict) -> tuple:
 
 def create_user(data: dict) -> tuple:
     try:
-        user = mysql_db.get_user_by_username(data["username"])
+        user = mysql_db.authenticate_user_by_username(data["username"])
         print(user)
         if user is None:
             sql_statement = concatenate_create_user_sql(data)
@@ -95,7 +95,7 @@ def create_user(data: dict) -> tuple:
             if procedure_status != "Success":
                 response_status = jsonify({"error": "Error occurred calling PROC_CREATE_USER procedure!", "message": f"{procedure_status}"}), 400
             else:
-                user_id = mysql_db.get_user_by_username(data["username"])["USER_ID"]
+                user_id = mysql_db.authenticate_user_by_username(data["username"])["USER_ID"]
                 print(f"user_id: {user_id}")
                 access_token = create_access_token(identity=str(user_id))
                 response_status = jsonify(access_token=access_token), 200
