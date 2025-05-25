@@ -33,7 +33,8 @@ def get_user_by_username(username: str) -> dict:
     return user
 
 def get_user_by_id(user_id: str) -> dict:
-    sql = f"SELECT * FROM USERS WHERE USER_ID = '{user_id}';"
+    print(f"user_id: {user_id}")
+    sql = f"SELECT * FROM USERS WHERE USER_ID = {user_id};"
     conn = mysql.connector.connect(**mysql_connection_string.config)
     cursor = conn.cursor(dictionary=True)
     cursor.execute(sql)

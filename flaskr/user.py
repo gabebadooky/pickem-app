@@ -9,19 +9,19 @@ bp = Blueprint("user", __name__, url_prefix="/user")
 def get_user_properties(user_id) -> tuple:
     try:
         user = mysql_db.get_user_by_id(user_id)
-
         if len(user) == 0:
             response_status = jsonify({"error": "Not Found", "message": "No Users found associated to the provided User ID."}), 406
         else:
             camel_cased_user = {
                 "userID": user["USERNAME"],
-                "userID": user["FAVORITE_TEAM"],
-                "userID": user["NOTIFICATION_PREF"],
-                "userID": user["EMAIL_ADDRESS"],
-                "userID": user["PHONE"]
+                "favoriteTeam": user["FAVORITE_TEAM"],
+                "notificationPreference": user["NOTIFICATION_PREF"],
+                "emailAddress": user["EMAIL_ADDRESS"],
+                "phone": user["PHONE"]
             }
             response_status = jsonify(camel_cased_user), 200
     except Exception as e:
+        print(e)
         response = jsonify({"error": "Request Error", "message": f"{e}"})
         response_status = response, 400
     return response_status
@@ -33,7 +33,7 @@ def update_user_email() -> tuple:
     [
         {
             "userID": <int>, (REQUIRED)
-            "emailAddres": <str> (REQUIRED)
+            "emailAddress": <str> (REQUIRED)
         }
     ]
     """

@@ -1,5 +1,5 @@
 import os
-from . import auth, games, teams, picks
+from . import auth, games, teams, picks, user
 from flask import Flask
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
@@ -37,6 +37,7 @@ def create_app(test_config=None):
     app.register_blueprint(games.bp)
     app.register_blueprint(teams.bp)
     app.register_blueprint(picks.bp)
+    app.register_blueprint(user.bp)
 
     @app.route('/')
     def hello():
