@@ -6,7 +6,7 @@ bp = Blueprint("picks", __name__, url_prefix="/picks")
 
 
 @bp.get("/<user_id>")
-def get_user_picks(user_id) -> tuple:
+def get_user_picks(user_id: int) -> tuple:
     try:
         sql_statement = f"SELECT * FROM GET_PICKS_VW WHERE USER_ID = {user_id};"
         picks = mysql_db.call_view(sql_statement)
@@ -18,9 +18,9 @@ def get_user_picks(user_id) -> tuple:
             for x in range(len(picks)):
                 camel_cased_pick = {
                     "gameID": picks[x]["GAME_ID"],
+                    "userID": picks[x]["USER_ID"],
                     "teamPicked": picks[x]["TEAM_PICKED"],
                     "pickWeight": picks[x]["PICK_WEIGHT"],
-                    "user_id": picks[x]["USER_ID"]
                 }
                 camel_cased_list.append(camel_cased_pick)
             
