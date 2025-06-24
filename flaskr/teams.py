@@ -1,20 +1,20 @@
 from flask import Blueprint, jsonify
 from . import mysql_db
 
-bp = Blueprint("teams", __name__, url_prefix="/teams")
+bp: Blueprint = Blueprint("teams", __name__, url_prefix="/teams")
 
 @bp.get("/")
 def get_teams() -> tuple:
     try:
-        sql_statement = f"SELECT * FROM GET_TEAMS_VW WHERE TEAM_ID IS NOT NULL;"
-        teams = mysql_db.call_view(sql_statement)
+        sql_statement: str = f"SELECT * FROM GET_TEAMS_VW WHERE TEAM_ID IS NOT NULL;"
+        teams: list = mysql_db.call_view(sql_statement)
 
         if len(teams) == 0:
-            response_status = jsonify({"error": "Not Found", "message": f"No records retrieved from given query:\n{sql_statement}"}), 400
+            response_status: tuple = jsonify({"error": "Not Found", "message": f"No records retrieved from given query:\n{sql_statement}"}), 400
         else:
-            camel_cased_list = []
+            camel_cased_list: list = []
             for x in range(len(teams)):
-                camel_cased_pick = {
+                camel_cased_pick: dict = {
                     "teamID": teams[x]["TEAM_ID"],
                     "cbsCode": teams[x]["CBS_CODE"],
                     "espnCode": teams[x]["ESPN_CODE"],
@@ -37,9 +37,9 @@ def get_teams() -> tuple:
                     "conferenceTies": teams[x]["CONFERENCE_TIES"],
                 }
                 camel_cased_list.append(camel_cased_pick)
-            response_status = jsonify(camel_cased_list), 200
+            response_status: tuple = jsonify(camel_cased_list), 200
     except Exception as e:
-        response = jsonify({"error": "Request Error", "message": f"{e}"})
-        response_status = response, 400
+        response: dict = jsonify({"error": "Request Error", "message": f"{e}"})
+        response_status: tuple = response, 400
     
     return response_status

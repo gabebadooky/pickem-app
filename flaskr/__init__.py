@@ -3,19 +3,19 @@ from . import auth, games, teams, picks, user
 from flask import Flask
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
-from credentials import secret
+from config import secret_key
 
 
 def create_app(test_config=None):
     # create and configure the app
-    app = Flask(__name__, instance_relative_config=True)
+    app: Flask = Flask(__name__, instance_relative_config=True)
     CORS(app)
     """app.config.from_mapping(
         SECRET_KEY='dev',
         DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
     )"""
     app.config.from_mapping(
-        SECRET_KEY = secret.key
+        SECRET_KEY = secret_key
     )
 
     jwt = JWTManager(app)
