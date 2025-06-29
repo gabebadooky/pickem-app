@@ -1,6 +1,5 @@
 # Credentials
-./credentials/mysql_connection_string
-./credentials/secret
+config
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
