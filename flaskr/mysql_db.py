@@ -1,6 +1,15 @@
-import mysql.connector
-from config import db_config as config
+import mysql.connector, os
+from dotenv import load_dotenv
 
+load_dotenv()
+config = {
+    "user": os.getenv("USER"),
+    "password": os.getenv("PASSWORD"),
+    "host": os.getenv("HOST"),
+    "port": os.getenv("PORT"),
+    "database": os.getenv("DATABASE"),
+    "auth_plugin": os.getenv("AUTH_PLUGIN"),
+}
 
 def execute_proc(sql: str) -> str:
     conn = mysql.connector.connect(**config)
