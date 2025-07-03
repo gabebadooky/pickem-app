@@ -42,7 +42,7 @@ def create_app(test_config=None):
     @app.route('/')
     def hello():
         return {
-            "hello": "world"
+            "gb": "pickem"
         }
 
     return app
