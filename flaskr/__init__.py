@@ -39,5 +39,7 @@ def create_app(test_config=None):
         return {
             "gb": "pickem"
         }
+    
+    #app.run()
 
     return app
