@@ -3,12 +3,12 @@ from dotenv import load_dotenv
 
 load_dotenv()
 config = {
-    "user": os.getenv("USER"),
-    "password": os.getenv("PASSWORD"),
-    "host": os.getenv("HOST"),
-    "port": os.getenv("PORT"),
-    "database": os.getenv("DATABASE"),
-    "auth_plugin": os.getenv("AUTH_PLUGIN"),
+    "user": "gbaduqui",
+    "password": os.getenv("MYSQL_PASSWORD"),
+    "host": "pickem-db-gb-pickem-db.i.aivencloud.com",
+    "port": 26264,
+    "database": "PICKEM_DB",
+    "auth_plugin": "caching_sha2_password"
 }
 
 def execute_proc(sql: str) -> str:
