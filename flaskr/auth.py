@@ -55,13 +55,23 @@ def login() -> tuple:
 ### OAUTH ###
 @bp.get("/google")
 def login_google() -> tuple:
+    oath: OAuth = OAuth(current_app)
+    oath.register(
+        name="google",
+        client_id=os.getenv("GOOGLE_CLIENT_ID"),
+        client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
+        server_metadata_uri="https://accounts.google.com/.well-known/openid-configuration",
+        client_kwargs={"scope": "openid profile email"}
+    )
+
     try:
-        google = current_app.config["GOOGLE_OAUTH"]
-        print(google)
-        token = google.authorize_access_token()
-        user_info_endpoint = google.server_metadata["userinfo_endpoint"]
-        response = google.get(user_info_endpoint)
-        user_info = response.json()
+        #google = current_app.config["GOOGLE_OAUTH"]
+        #print(google)
+        token = oath.google.authorize_access_token()
+        #user_info_endpoint = google.server_metadata["userinfo_endpoint"]
+        #response = google.get(user_info_endpoint)
+        #user_info = response.json()
+        user_info = token["userinfo"]
         print(user_info)
         user: dict = mysql_db.get_user_by_username(user_info['email'])
         if user is None:
@@ -70,9 +80,8 @@ def login_google() -> tuple:
         response_status: tuple = jsonify(access_token=token), 200
     except Exception as e:
         print(f"Error occurred during Google OAuth Login: {e}")
-        response_status: tuple = {{"error": "Google OAuth Login", "message": f"{e}"}}, 400
-    return response_status    
-
+        response_status: tuple = jsonify({"error": "Google OAuth Login", "message": f"{e}"}), 400
+    return response_status
 ### OAUTH ###
 
 
