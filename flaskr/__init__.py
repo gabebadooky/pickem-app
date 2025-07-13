@@ -1,21 +1,22 @@
 import os
 from . import auth, games, teams, picks, user
+from dotenv import load_dotenv
 from flask import Flask
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
-from dotenv import load_dotenv
+from authlib.integrations.flask_client import OAuth
 
 
 def create_app(test_config=None):
     # create and configure the app
     app: Flask = Flask(__name__, instance_relative_config=True)
     CORS(app)
-    
+
     load_dotenv()
     app.config.from_mapping(
         SECRET_KEY = os.getenv("SECRET_KEY")
     )
-
+    
     jwt = JWTManager(app)
 
     if test_config is None:

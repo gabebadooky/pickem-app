@@ -1,10 +1,13 @@
-from flask import Blueprint, g, jsonify, redirect, session, request, url_for
+import os
+from flask import current_app, Blueprint, g, jsonify, redirect, request, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_jwt_extended import create_access_token
+from authlib.integrations.flask_client import OAuth
 from datetime import timedelta
 from . import mysql_db
 
-bp: Blueprint = Blueprint("auth", __name__, url_prefix="/auth")
+
+bp: Blueprint = Blueprint("auth", __name__, url_prefix="/auth",)
 
 @bp.post("/register")
 def register() -> tuple:
@@ -47,21 +50,39 @@ def login() -> tuple:
     else:
         response: tuple = jsonify({"error": "Invalid request body!"}), 400
     return response
-    
-#@bp.before_app_request
-def load_user():
-    user_id: int = session.get("user_id")
-    if user_id is None:
-        g.user = None
-    else:
-        g.user = mysql_db.authenticate_user_by_id(user_id)
-
-@bp.route("/logout")
-def logout():
-    session.clear()
-    return redirect(url_for("/login"))
 
 
+### OAUTH ###
+@bp.get("/google")
+def login_google() -> tuple:
+    oath: OAuth = OAuth(current_app)
+    oath.register(
+        name="google",
+        client_id=os.getenv("GOOGLE_CLIENT_ID"),
+        client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
+        server_metadata_uri="https://accounts.google.com/.well-known/openid-configuration",
+        client_kwargs={"scope": "openid profile email"}
+    )
+
+    try:
+        #google = current_app.config["GOOGLE_OAUTH"]
+        #print(google)
+        token = oath.google.authorize_access_token()
+        #user_info_endpoint = google.server_metadata["userinfo_endpoint"]
+        #response = google.get(user_info_endpoint)
+        #user_info = response.json()
+        user_info = token["userinfo"]
+        print(user_info)
+        user: dict = mysql_db.get_user_by_username(user_info['email'])
+        if user is None:
+            mysql_db.execute_proc(concatenate_create_user_sql(user_info))
+        
+        response_status: tuple = jsonify(access_token=token), 200
+    except Exception as e:
+        print(f"Error occurred during Google OAuth Login: {e}")
+        response_status: tuple = jsonify({"error": "Google OAuth Login", "message": f"{e}"}), 400
+    return response_status
+### OAUTH ###
 
 
 def authenticate_user(data: dict) -> tuple:
@@ -104,6 +125,12 @@ def create_user(data: dict) -> tuple:
 
 
 def concatenate_create_user_sql(data: dict) -> str:
+    if ("password" not in data):
+        # OAUTH
+        password: str = ""
+    else:
+        password: str = data['password']
+
     if ("favoriteTeam" not in data):
         favoriteTeam: str = "NULL"
     else:
@@ -126,7 +153,7 @@ def concatenate_create_user_sql(data: dict) -> str:
 
     sql_statement: str = (f"""CALL PROC_CREATE_USER(
         '{data["username"]}',
-        '{generate_password_hash(data["password"], "pbkdf2:sha256", 16)}', 
+        '{generate_password_hash(password, "pbkdf2:sha256", 16)}', 
         {favoriteTeam}, 
         {notificationPreference},
         {emailAddress},
