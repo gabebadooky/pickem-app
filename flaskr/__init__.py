@@ -1,20 +1,31 @@
 import os
 from . import auth, games, teams, picks, user
+from dotenv import load_dotenv
 from flask import Flask
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
-from dotenv import load_dotenv
+from authlib.integrations.flask_client import OAuth
 
 
 def create_app(test_config=None):
     # create and configure the app
     app: Flask = Flask(__name__, instance_relative_config=True)
     CORS(app)
-    
+
     load_dotenv()
     app.config.from_mapping(
         SECRET_KEY = os.getenv("SECRET_KEY")
     )
+
+    oath: OAuth = OAuth(app)
+    google_oath = oath.register(
+        name="google",
+        client_id=os.getenv("GOOGLE_OAUTH_CLIENT_ID"),
+        client_secret=os.getenv("GOOGLE_OAUTH_CLIENT_SECRET"),
+        server_metadata_uri="https://accounts.google.com/.well-known/openid-configuration",
+        client_kwargs={"scope": "openid profile email"}
+    )
+    app.config["GOOGLE_OAUTH"] = google_oath
 
     jwt = JWTManager(app)
 
