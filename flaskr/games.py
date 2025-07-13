@@ -6,7 +6,7 @@ bp: Blueprint = Blueprint("games", __name__, url_prefix="/games")
 @bp.get("/")
 def get_games() -> tuple:
     try:
-        sql_statement: str = f"SELECT * FROM GET_GAMES_VW WHERE GAME_ID IS NOT NULL;"
+        sql_statement: str = f"SELECT * FROM GET_GAMES_VW ORDER BY DATE, TIME, LEAGUE;"
         games: list = mysql_db.call_view(sql_statement)
 
         if len(games) == 0:
