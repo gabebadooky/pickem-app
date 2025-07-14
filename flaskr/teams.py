@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from . import mysql_db
 
 bp: Blueprint = Blueprint("teams", __name__, url_prefix="/teams")
@@ -43,3 +43,37 @@ def get_teams() -> tuple:
         response_status: tuple = response, 400
     
     return response_status
+
+
+@bp.post("/update-notes")
+def update_team_notes() -> tuple:
+    """
+    Body Example:
+    [
+        {
+            "userID": <int>, (REQUIRED)
+            "teamID": <str>, (REQUIRED)
+            "notes": <str>
+        }
+    ]
+    """
+    data = request.json
+    try:
+        procedure_output: str = sql_update_team_notes(data)
+        if procedure_output == "Success":
+            response_status: tuple = jsonify(message = "Success"), 201
+        else:
+            response_status: tuple = jsonify({"error": "Team Notes not updated", "message": f"{procedure_output}"})
+    except Exception as e:
+        response_status: tuple = jsonify({"error": "Team Notes not updated", "message": f"{e}"}), 400
+    return response_status
+    
+
+
+def sql_update_team_notes(data: dict) -> str:
+    user_id: int = data["userID"]
+    team_id: str = data["teamID"]
+    notes: str = data["notes"]
+    sql_statement: str = f"CALL PROC_UPDATE_TEAM_NOTES({user_id}, '{team_id}', '{notes}', @status);"
+    procedure_output: str = mysql_db.execute_proc(sql_statement)
+    return procedure_output
