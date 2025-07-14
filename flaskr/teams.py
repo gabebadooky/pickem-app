@@ -45,6 +45,30 @@ def get_teams() -> tuple:
     return response_status
 
 
+@bp.get("/notes/<user_id>")
+def get_team_notes(user_id) -> tuple:
+    try:
+        sql_statement: str = f"SELECT USER_ID, TEAM_ID, NOTES FROM USER_TEAM_NOTES WHERE USER_ID = {user_id};"
+        notes: list = mysql_db.call_view(sql_statement)
+
+        if len(notes) == 0:
+            response_status: tuple = jsonify({"error": "Request Error", "message": f"No records retrieved from given query: {sql_statement}"}), 400
+        else:
+            camel_cased_list: list = []
+            for x in range(len(notes)):
+                camel_cased_note: dict = {
+                    "userID": notes[x]["USER_ID"],
+                    "teamID": notes[x]["TEAM_ID"],
+                    "notes": notes[x]["NOTES"]
+                }
+                camel_cased_list.append(camel_cased_note)
+            response_status: tuple = jsonify(camel_cased_list), 200
+
+    except Exception as e:
+        response_status: tuple = jsonify({"error": "Request Error", "message": f"{e}"})
+    return response_status
+
+
 @bp.post("/update-notes")
 def update_team_notes() -> tuple:
     """
