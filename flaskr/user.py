@@ -13,7 +13,8 @@ def get_user_properties(user_id) -> tuple:
             response_status: tuple = jsonify({"error": "Not Found", "message": "No Users found associated to the provided User ID."}), 406
         else:
             camel_cased_user: dict = {
-                "userID": user["USERNAME"],
+                "userID": user["USER_ID"],
+                "username": user["USERNAME"],
                 "favoriteTeam": user["FAVORITE_TEAM"],
                 "notificationPreference": user["NOTIFICATION_PREF"],
                 "emailAddress": user["EMAIL_ADDRESS"],
