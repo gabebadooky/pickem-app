@@ -61,7 +61,7 @@ def get_team_notes(user_id) -> tuple:
                 if notes_bytes is None: 
                     notes_property = ""
                 else:
-                    notes_property = base64.b64encode(notes[x]["NOTES"]).decode("utf-8")
+                    notes_property = base64.b64decode(notes[x]["NOTES"]).encode("utf-8")
                 camel_cased_note: dict = {
                     "userID": notes[x]["USER_ID"],
                     "teamID": notes[x]["TEAM_ID"],
