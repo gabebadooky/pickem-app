@@ -104,7 +104,7 @@ def sql_update_team_notes(data: dict) -> str:
     notes_str: str = data["notes"]
     user_id: int = data["userID"]
     team_id: str = data["teamID"]
-    notes: bytes = base64.b64encode(data["notes"])
+    notes: bytes = base64.b64encode(notes_str.encode("utf-8"))
     sql_statement: str = f"CALL PROC_UPDATE_TEAM_NOTES({user_id}, '{team_id}', {notes}, @status);"
     procedure_output: str = mysql_db.execute_proc(sql_statement)
     return procedure_output
