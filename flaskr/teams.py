@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
 from . import mysql_db
+import base64
 
 bp: Blueprint = Blueprint("teams", __name__, url_prefix="/teams")
 
@@ -59,7 +60,7 @@ def get_team_notes(user_id) -> tuple:
                 camel_cased_note: dict = {
                     "userID": notes[x]["USER_ID"],
                     "teamID": notes[x]["TEAM_ID"],
-                    "notes": notes[x]["NOTES"]
+                    "notes": base64.b64encode(notes[x]["NOTES"]).decode("utf-8")
                 }
                 camel_cased_list.append(camel_cased_note)
             response_status: tuple = jsonify(camel_cased_list), 200
