@@ -101,10 +101,10 @@ def update_team_notes() -> tuple:
 
 
 def sql_update_team_notes(data: dict) -> str:
-    notes_str: str data["notes"]
+    notes_str: str = data["notes"]
     user_id: int = data["userID"]
     team_id: str = data["teamID"]
-    notes = notes_str.encode("utf-8") # base64.b64encode(data["notes"].encode("utf-8"))
+    notes: bytes = notes_str.encode("utf-8") # base64.b64encode(data["notes"].encode("utf-8"))
     sql_statement: str = f"CALL PROC_UPDATE_TEAM_NOTES({user_id}, '{team_id}', {notes}, @status);"
     procedure_output: str = mysql_db.execute_proc(sql_statement)
     return procedure_output
