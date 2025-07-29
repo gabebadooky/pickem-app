@@ -57,10 +57,15 @@ def get_team_notes(user_id) -> tuple:
         else:
             camel_cased_list: list = []
             for x in range(len(notes)):
+                notes_bytes = notes[x]["NOTES"]
+                if notes_bytes is None: 
+                    notes_property = ""
+                else:
+                    notes_property = base64.b64encode(notes[x]["NOTES"]).decode("utf-8")
                 camel_cased_note: dict = {
                     "userID": notes[x]["USER_ID"],
                     "teamID": notes[x]["TEAM_ID"],
-                    "notes": base64.b64encode(notes[x]["NOTES"]).decode("utf-8")
+                    "notes": notes_property
                 }
                 camel_cased_list.append(camel_cased_note)
             response_status: tuple = jsonify(camel_cased_list), 200
