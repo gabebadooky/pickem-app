@@ -61,7 +61,7 @@ def get_team_notes(user_id) -> tuple:
                 if notes_bytes is None: 
                     notes_property = ""
                 else:
-                    notes_property = base64.b64encode(notes[x]["NOTES"]).decode("utf-8")
+                    notes_property = base64.b64decode(notes[x]["NOTES"]).decode("utf-8")
                 camel_cased_note: dict = {
                     "userID": notes[x]["USER_ID"],
                     "teamID": notes[x]["TEAM_ID"],
@@ -103,7 +103,7 @@ def update_team_notes() -> tuple:
 def sql_update_team_notes(data: dict) -> str:
     user_id: int = data["userID"]
     team_id: str = data["teamID"]
-    notes: str = data["notes"].encode("utf-8")
+    notes: str = base64.b64encode(data["notes"].encode("utf-8"))
     sql_statement: str = f"CALL PROC_UPDATE_TEAM_NOTES({user_id}, '{team_id}', '{notes}', @status);"
     procedure_output: str = mysql_db.execute_proc(sql_statement)
     return procedure_output
