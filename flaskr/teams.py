@@ -17,6 +17,7 @@ def get_teams() -> tuple:
             for x in range(len(teams)):
                 camel_cased_pick: dict = {
                     "teamID": teams[x]["TEAM_ID"],
+                    "league": teams[x]["LEAGUE"],
                     "cbsCode": teams[x]["CBS_CODE"],
                     "espnCode": teams[x]["ESPN_CODE"],
                     "foxCode": teams[x]["FOX_CODE"],
