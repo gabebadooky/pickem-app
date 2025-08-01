@@ -9,6 +9,18 @@ from . import mysql_db
 
 bp: Blueprint = Blueprint("auth", __name__, url_prefix="/auth",)
 
+
+oath: OAuth = OAuth(current_app)
+google = oath.register(
+    name="google",
+    client_id=os.getenv("GOOGLE_CLIENT_ID"),
+    client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
+    authorize_url='https://accounts.google.com/o/oauth2/auth',
+    server_metadata_uri="https://accounts.google.com/.well-known/openid-configuration",
+    client_kwargs={"scope": "openid profile email"}
+)
+
+
 @bp.post("/register")
 def register() -> tuple:
     """
@@ -53,34 +65,30 @@ def login() -> tuple:
 
 
 ### OAUTH ###
-@bp.get("/google")
+@bp.route("/google/login")
 def login_google() -> tuple:
-    oath: OAuth = OAuth(current_app)
-    oath.register(
-        name="google",
-        client_id=os.getenv("GOOGLE_CLIENT_ID"),
-        client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
-        server_metadata_uri="https://accounts.google.com/.well-known/openid-configuration",
-        client_kwargs={"scope": "openid profile email"}
-    )
-
     try:
-        #google = current_app.config["GOOGLE_OAUTH"]
-        #print(google)
-        token = oath.google.authorize_access_token()
-        #user_info_endpoint = google.server_metadata["userinfo_endpoint"]
-        #response = google.get(user_info_endpoint)
-        #user_info = response.json()
-        user_info = token["userinfo"]
-        print(user_info)
-        user: dict = mysql_db.get_user_by_username(user_info['email'])
-        if user is None:
-            mysql_db.execute_proc(concatenate_create_user_sql(user_info))
-        
-        response_status: tuple = jsonify(access_token=token), 200
+        redirect_uri = url_for("auth.authorize_google", _external=True)
+        return google.authorize_redirect(redirect_uri)
     except Exception as e:
-        print(f"Error occurred during Google OAuth Login: {e}")
-        response_status: tuple = jsonify({"error": "Google OAuth Login", "message": f"{e}"}), 400
+        print(f"Error occurred during Google OAuth Login attempt: {e}")
+        return jsonify({"error": "Google Login Error", "message": f"{e}"}), 400
+
+
+@bp.route("/google/authorize")
+def authorize_google():
+    token = google.authorize_access_token()
+    user_info_endpoint = google.server_metadata["userinfo_endpoint"]
+    response = google.get(user_info_endpoint)
+    user_info = response.json()
+    username = user_info["email"]
+    print(user_info)
+    user: dict = mysql_db.get_user_by_username(username)
+    if user is None:
+        mysql_db.execute_proc(concatenate_create_user_sql(user_info))
+        response_status: tuple = jsonify(access_token=token), 200
+    else:
+        response_status: tuple = jsonify(access_token=token), 200
     return response_status
 ### OAUTH ###
 
@@ -126,8 +134,7 @@ def create_user(data: dict) -> tuple:
 
 def concatenate_create_user_sql(data: dict) -> str:
     if ("password" not in data):
-        # OAUTH
-        password: str = ""
+        password: str = "" # OAUTH
     else:
         password: str = data['password']
 
