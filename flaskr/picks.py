@@ -48,19 +48,22 @@ def submit_pick() -> tuple:
     ]
     """
     data = request.json
-    #current_user = get_jwt_identity()
-    try:
-        if ("userID" not in data) or ("gameID" not in data) or ("teamPicked" not in data) or ("pickWeight" not in data):
-            response_status: dict = jsonify({"error": "Required parameter missing from request", "message": "Required parameters: userID, gameID, teamPicked, pickWeight"}), 400
-        else:
-            procedure_output: str = sql_update_pick(data)
-            if procedure_output == "Success":
-                response_status: tuple = jsonify(message = "Success"), 201
+    current_user = int(get_jwt_identity())
+    if current_user != data["userID"]:
+        response_status = jsonify({"error": "Cannot update another user's picks!"})
+    else:
+        try:
+            if ("userID" not in data) or ("gameID" not in data) or ("teamPicked" not in data) or ("pickWeight" not in data):
+                response_status: dict = jsonify({"error": "Required parameter missing from request", "message": "Required parameters: userID, gameID, teamPicked, pickWeight"}), 400
             else:
-                response_status: tuple = jsonify({"error": f"Error occurred updating Pick database record!", "message": procedure_output}), 400
-    except Exception as e:
-        print(f"Error occurred calling submit endpoint! {e}")
-        response_status: tuple = jsonify({"error": f"Error occurred calling submit endpoint!", "message": f"{e}"}), 400
+                procedure_output: str = sql_update_pick(data)
+                if procedure_output == "Success":
+                    response_status: tuple = jsonify(message = "Success"), 201
+                else:
+                    response_status: tuple = jsonify({"error": f"Error occurred updating Pick database record!", "message": procedure_output}), 400
+        except Exception as e:
+            print(f"Error occurred calling submit endpoint! {e}")
+            response_status: tuple = jsonify({"error": f"Error occurred calling submit endpoint!", "message": f"{e}"}), 400
     return response_status
 
 

@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
+from flask_jwt_extended import get_jwt_identity, jwt_required
 from . import mysql_db
-import base64
 
 bp: Blueprint = Blueprint("teams", __name__, url_prefix="/teams")
 
@@ -77,6 +77,7 @@ def get_team_notes(user_id) -> tuple:
 
 
 @bp.post("/update-notes")
+@jwt_required()
 def update_team_notes() -> tuple:
     """
     Body Example:
@@ -89,14 +90,18 @@ def update_team_notes() -> tuple:
     ]
     """
     data = request.json
-    try:
-        procedure_output: str = sql_update_team_notes(data)
-        if procedure_output == "Success":
-            response_status: tuple = jsonify(message = "Success"), 201
-        else:
-            response_status: tuple = jsonify({"error": "Team Notes not updated", "message": f"{procedure_output}"})
-    except Exception as e:
-        response_status: tuple = jsonify({"error": "Team Notes not updated", "message": f"{e}"}), 400
+    current_user = int(get_jwt_identity())
+    if current_user != data["userID"]:
+        response_status = jsonify({"error": "Cannot update another user's picks!"})
+    else:
+        try:
+            procedure_output: str = sql_update_team_notes(data)
+            if procedure_output == "Success":
+                response_status: tuple = jsonify(message = "Success"), 201
+            else:
+                response_status: tuple = jsonify({"error": "Team Notes not updated", "message": f"{procedure_output}"})
+        except Exception as e:
+            response_status: tuple = jsonify({"error": "Team Notes not updated", "message": f"{e}"}), 400
     return response_status
     
 
