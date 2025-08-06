@@ -93,7 +93,7 @@ def authorize_google():
     else:
         resp: tuple = authenticate_user({ username: username})
         #response_status: tuple = jsonify(token), 200
-    redirect(f"https://have-a-nice-pickem.onrender.com/{resp['access_token']}")
+    redirect(f"https://have-a-nice-pickem.onrender.com/{resp[0]['access_token']}")
 ### OAUTH ###
 
 
