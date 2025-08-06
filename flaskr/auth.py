@@ -20,8 +20,6 @@ google = oath.register(
     client_kwargs={"scope": "openid profile email"}
 )
 
-session.get("user")
-
 
 @bp.post("/register")
 def register() -> tuple:
@@ -69,6 +67,7 @@ def login() -> tuple:
 ### OAUTH ###
 @bp.route("/google/login")
 def login_google() -> tuple:
+    session.get("user")
     try:
         redirect_uri = url_for("auth.authorize_google", _external=True)
         return google.authorize_redirect(redirect_uri)
