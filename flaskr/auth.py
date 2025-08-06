@@ -91,11 +91,11 @@ def authorize_google():
         #mysql_db.execute_proc(concatenate_create_user_sql(user_info))
         #response_status: tuple = jsonify(token), 200        
     else:
-        resp: tuple = authenticate_user({ username: username})
+        resp: tuple = authenticate_user({ username: username })
         #response_status: tuple = jsonify(token), 200
     print(f"resp: {resp}")
     print(f"resp[0]: {resp[0]}")
-    redirect(f"https://have-a-nice-pickem.onrender.com/{resp[0]}")
+    return redirect(f"https://have-a-nice-pickem.onrender.com/{resp[0]}")
 ### OAUTH ###
 
 
