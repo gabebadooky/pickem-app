@@ -163,7 +163,7 @@ def concatenate_create_user_sql(data: dict) -> str:
         phoneNumber: str = f"'{data['phoneNumber']}'"
 
     sql_statement: str = (f"""CALL PROC_CREATE_USER(
-        '{data["username"]}',
+        '{username}',
         '{generate_password_hash(password, "pbkdf2:sha256", 16)}', 
         {favoriteTeam}, 
         {notificationPreference},
