@@ -95,7 +95,10 @@ def authorize_google():
         print(f"Authenticating existing Google user {email_address}...")
         resp: tuple = authenticate_user({ "username": email_address, "password": "" })
         #response_status: tuple = jsonify(token), 200
-    access_token: str = resp[0].access_token
+    if (resp[0].access_token):
+        access_token = resp[0].access_token
+    else:
+        access_token: str = resp[0]
     return access_token # redirect(f"https://have-a-nice-pickem.onrender.com/{resp[0]['access_token']}")
 ### OAUTH ###
 
@@ -130,6 +133,7 @@ def create_user(data: dict) -> tuple:
             else:
                 user_id: int = mysql_db.get_user_by_username(data["username"])["USER_ID"]
                 access_token: str = create_access_token(identity=str(user_id), expires_delta=timedelta(hours=2))
+                print(f"access_token: {access_token}")
                 response_status: tuple = jsonify(access_token=access_token), 200
         else:
             print(f"User {data['username']} already exists!")
