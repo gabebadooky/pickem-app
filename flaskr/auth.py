@@ -1,5 +1,5 @@
 import os
-from flask import current_app, Blueprint, g, jsonify, redirect, request, url_for
+from flask import current_app, Blueprint, g, jsonify, redirect, request, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_jwt_extended import create_access_token
 from authlib.integrations.flask_client import OAuth
@@ -19,6 +19,8 @@ google = oath.register(
     server_metadata_uri="https://accounts.google.com/.well-known/openid-configuration",
     client_kwargs={"scope": "openid profile email"}
 )
+
+session.get("user")
 
 
 @bp.post("/register")
@@ -69,7 +71,6 @@ def login() -> tuple:
 def login_google() -> tuple:
     try:
         redirect_uri = url_for("auth.authorize_google", _external=True)
-        print(f"redirect_uri: {redirect_uri}")
         return google.authorize_redirect(redirect_uri)
     except Exception as e:
         print(f"Error occurred during Google OAuth Login attempt: {e}")
@@ -79,6 +80,7 @@ def login_google() -> tuple:
 @bp.route("/google/authorize")
 def authorize_google():
     token = google.authorize_access_token()
+    session["user"] = token["userinfo"]
     user_info_endpoint = google.server_metadata["userinfo_endpoint"]
     response = google.get(user_info_endpoint)
     user_info = response.json()
@@ -101,6 +103,7 @@ def authenticate_user(data: dict) -> tuple:
             response_status: dict = jsonify({"error": "Not Found", "message": "No users found associated to the provided username."}), 406
         elif check_password_hash(user["PWDHASH"], data["password"]):
             access_token: str = create_access_token(identity=str(user["USER_ID"]), expires_delta=timedelta(hours=2))
+            session["user"] = user
             response_status: tuple = jsonify(access_token=access_token), 200
         else:
             response_status: tuple = ({"error": "Incorrect username or password", "message": "Incorrect Username or Password"}), 406
@@ -124,6 +127,7 @@ def create_user(data: dict) -> tuple:
             else:
                 user_id: int = mysql_db.get_user_by_username(data["username"])["USER_ID"]
                 access_token: str = create_access_token(identity=str(user_id), expires_delta=timedelta(hours=2))
+                session["user"] = user
                 response_status: tuple = jsonify(access_token=access_token), 200
         else:
             print(f"User {data['username']} already exists!")
