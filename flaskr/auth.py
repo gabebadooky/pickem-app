@@ -69,6 +69,7 @@ def login() -> tuple:
 def login_google() -> tuple:
     try:
         redirect_uri = url_for("auth.authorize_google", _external=True)
+        print(f"redirect_uri: {redirect_uri}")
         return google.authorize_redirect(redirect_uri)
     except Exception as e:
         print(f"Error occurred during Google OAuth Login attempt: {e}")
