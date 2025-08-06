@@ -91,7 +91,6 @@ def authorize_google():
         response_status: tuple = jsonify(token), 200        
     else:
         response_status: tuple = jsonify(token), 200
-    redirect(f"https://have-a-nice-pickem.onrender.com") #?access_token={token}")
     return response_status
 ### OAUTH ###
 
