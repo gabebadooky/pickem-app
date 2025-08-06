@@ -95,7 +95,7 @@ def authorize_google():
         print(f"Authenticating existing Google user {email_address}...")
         resp: tuple = authenticate_user({ "username": email_address, "password": "" })
         #response_status: tuple = jsonify(token), 200
-    if (resp[0].access_token):
+    if ("access_token" in resp[0]):
         access_token = resp[0].access_token
     else:
         access_token: str = resp[0]
