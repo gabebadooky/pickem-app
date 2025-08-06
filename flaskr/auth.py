@@ -69,7 +69,7 @@ def login() -> tuple:
 def login_google() -> tuple:
     try:
         redirect_uri = url_for("auth.authorize_google", _external=True)
-        return google.authorize_redirect(redirect_uri)
+        return oauth.google.authorize_redirect(redirect_uri)
     except Exception as e:
         print(f"Error occurred during Google OAuth Login attempt: {e}")
         return jsonify({"error": "Google Login Error", "message": f"{e}"}), 400
@@ -77,9 +77,9 @@ def login_google() -> tuple:
 
 @bp.route("/google/authorize")
 def authorize_google():
-    token = google.authorize_access_token()
-    user_info_endpoint = google.server_metadata["userinfo_endpoint"]
-    response = google.get(user_info_endpoint)
+    token = oauth.google.authorize_access_token()
+    user_info_endpoint = oauth.google.server_metadata["userinfo_endpoint"]
+    response = oauth.google.get(user_info_endpoint)
     user_info = response.json()
     username = user_info["email"]
     print(user_info)
