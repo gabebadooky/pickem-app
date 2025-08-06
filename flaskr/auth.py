@@ -138,9 +138,7 @@ def create_user(data: dict) -> tuple:
     return response_status
 
 
-def concatenate_create_user_sql(data: dict) -> str:
-    username: str = data["email"] if "username" not in data else data["username"]
-    
+def concatenate_create_user_sql(data: dict) -> str:    
     if ("password" not in data):
         password: str = "" # OAUTH
     else:
@@ -167,7 +165,7 @@ def concatenate_create_user_sql(data: dict) -> str:
         phoneNumber: str = f"'{data['phoneNumber']}'"
 
     sql_statement: str = (f"""CALL PROC_CREATE_USER(
-        '{username}',
+        '{data["username"]}',
         '{generate_password_hash(password, "pbkdf2:sha256", 16)}', 
         {favoriteTeam}, 
         {notificationPreference},
