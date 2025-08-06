@@ -135,6 +135,8 @@ def create_user(data: dict) -> tuple:
 
 
 def concatenate_create_user_sql(data: dict) -> str:
+    username: str = data["name"].replace(" ", "") if "username" not in data else data["username"]
+    
     if ("password" not in data):
         password: str = "" # OAUTH
     else:
