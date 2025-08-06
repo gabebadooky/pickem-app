@@ -83,17 +83,15 @@ def authorize_google():
     user_info_endpoint = google.server_metadata["userinfo_endpoint"]
     response = google.get(user_info_endpoint)
     user_info = response.json()
-    username = user_info["email"]
+    username = user_info["name"].replace(" ", "") 
     print(user_info)
     user: dict = mysql_db.get_user_by_username(username)
     if user is None:
         mysql_db.execute_proc(concatenate_create_user_sql(user_info))
-        # response_status: tuple = jsonify(access_token=token), 200
         response_status: tuple = jsonify(token), 200        
     else:
-        # response_status: tuple = jsonify(access_token=token), 200
         response_status: tuple = jsonify(token), 200
-    return response_status
+    return redirect(f"https://have-a-nice-pickem.onrender.com?access_token={response_status}")
 ### OAUTH ###
 
 
