@@ -88,10 +88,10 @@ def authorize_google():
     user: dict = mysql_db.get_user_by_username(username)
     if user is None:
         mysql_db.execute_proc(concatenate_create_user_sql(user_info))
-        response_status: tuple = jsonify(token), 200        
-    else:
-        response_status: tuple = jsonify(token), 200
-    return redirect(f"https://have-a-nice-pickem.onrender.com?access_token={response_status}")
+        #response_status: tuple = jsonify(token), 200        
+    #else:
+        #response_status: tuple = jsonify(token), 200
+    return redirect(f"https://have-a-nice-pickem.onrender.com?access_token={token}")
 ### OAUTH ###
 
 
