@@ -98,9 +98,9 @@ def authorize_google():
     print(f"resp[0].json: {resp[0].json}")
     if ("access_token" in resp[0].json):
         access_token = resp[0].json["access_token"]
-    else:
-        access_token: str = resp[0]
-    return access_token # redirect(f"https://have-a-nice-pickem.onrender.com/{resp[0]['access_token']}")
+        return redirect(f"https://have-a-nice-pickem.onrender.com?token={access_token}")
+    else:        
+        return redirect(f"https://have-a-nice-pickem.onrender.com/")
 ### OAUTH ###
 
 
