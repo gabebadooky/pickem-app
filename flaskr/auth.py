@@ -87,7 +87,7 @@ def authorize_google():
     print(user_info)
     user: dict = mysql_db.get_user_by_username(email_address)
     if user is None:
-        resp: tuple = create_user({ "username": username })
+        resp: tuple = create_user({ "username": email_address })
         #mysql_db.execute_proc(concatenate_create_user_sql(user_info))
         #response_status: tuple = jsonify(token), 200        
     else:
