@@ -87,15 +87,16 @@ def authorize_google():
     print(user_info)
     user: dict = mysql_db.get_user_by_username(email_address)
     if user is None:
+        print(f"Creating new Google user {email_address}...")
         resp: tuple = create_user({ "username": email_address })
         #mysql_db.execute_proc(concatenate_create_user_sql(user_info))
         #response_status: tuple = jsonify(token), 200        
     else:
+        print(f"Authenticating existing Google user {email_address}...")
         resp: tuple = authenticate_user({ "username": email_address, "password": "" })
         #response_status: tuple = jsonify(token), 200
-    print(f"resp: {resp}")
-    print(f"resp[0]: {resp[0]}")
-    return resp[0] # redirect(f"https://have-a-nice-pickem.onrender.com/{resp[0]['access_token']}")
+    access_token: str = resp[0].access_token
+    return access_token # redirect(f"https://have-a-nice-pickem.onrender.com/{resp[0]['access_token']}")
 ### OAUTH ###
 
 
