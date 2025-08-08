@@ -4,7 +4,7 @@ from . import mysql_db
 bp: Blueprint = Blueprint("games", __name__, url_prefix="/games")
 
 @bp.get("/")
-def get_games() -> tuple:
+def get_all_games() -> tuple:
     try:
         sql_statement: str = f"SELECT * FROM GET_GAMES_VW ORDER BY DATE, TIME, LEAGUE;"
         games: list = mysql_db.call_view(sql_statement)
@@ -85,7 +85,7 @@ def get_games() -> tuple:
 
 
 @bp.get("/week/<week>")
-def get_games(week):
+def get_week_games(week):
     try:
         sql_statement: str = f"SELECT * FROM GET_GAMES_VW WHERE WEEK = {week} ORDER BY DATE, TIME, LEAGUE;"
         games: list = mysql_db.call_view(sql_statement)
