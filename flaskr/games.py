@@ -87,7 +87,7 @@ def get_all_games() -> tuple:
 @bp.get("/week/<week>")
 def get_week_games(week):
     try:
-        sql_statement: str = f"SELECT * FROM GET_GAMES_VW WHERE WEEK = {week} ORDER BY DATE, TIME, LEAGUE;"
+        sql_statement: str = f"SELECT * FROM GET_GAMES_VW WHERE (LEAGUE = 'CFB' AND WEEK = {week}) OR (LEAGUE = 'NFL' AND WEEK = {week} - 1) ORDER BY DATE, TIME, LEAGUE;"
         games: list = mysql_db.call_view(sql_statement)
 
         if len(games) == 0:
