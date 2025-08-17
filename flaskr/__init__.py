@@ -1,5 +1,5 @@
 import os
-from . import auth, games, teams, picks, user
+from . import auth, games, maintenance, picks, teams, user
 from dotenv import load_dotenv
 from flask import Flask
 from flask_cors import CORS
@@ -37,6 +37,7 @@ def create_app(test_config=None):
     app.register_blueprint(teams.bp)
     app.register_blueprint(picks.bp)
     app.register_blueprint(user.bp)
+    app.register_blueprint(maintenance.bp)
 
     @app.route('/')
     def hello():
