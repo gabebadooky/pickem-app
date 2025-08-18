@@ -7,7 +7,7 @@ bp: Blueprint = Blueprint("maintenance", __name__, url_prefix="/maintenance")
 def call_is_system_under_maintenance_view() -> tuple:
     try:
         is_system_under_maintenance: int = mysql_db.call_view("SELECT * FROM IS_SYSTEM_UNDER_MAINTENANCE_VW;")
-        response_status = jsonify({"underMaintenance": is_system_under_maintenance["UNDER_MAINTENANCE"]}), 200
+        response_status = jsonify({"underMaintenance": is_system_under_maintenance[0]}), 200
     except Exception as e:
         response: dict = jsonify({"error": "Request Error", "message": f"{e}"})
         response_status: tuple = response, 400
