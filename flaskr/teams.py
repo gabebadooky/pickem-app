@@ -37,6 +37,7 @@ def get_teams() -> tuple:
                     "conferenceWins": teams[x]["CONFERENCE_WINS"],
                     "conferenceLosses": teams[x]["CONFERENCE_LOSSES"],
                     "conferenceTies": teams[x]["CONFERENCE_TIES"],
+                    "ranking": teams[x]["RANKING"]
                 }
                 camel_cased_list.append(camel_cased_pick)
             response_status: tuple = jsonify(camel_cased_list), 200
