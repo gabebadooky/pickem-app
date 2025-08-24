@@ -15,12 +15,17 @@ def get_leaderboard() -> tuple:
         for x in range(len(leaderboard)):
             camel_cased_row: dict = {
                 "userID": leaderboard[x]["USER_ID"],
+                "username": leaderboard[x]["USERNAME"],
                 "week": leaderboard[x]["WEEK"],
                 "league": leaderboard[x]["LEAGUE"],
                 "year": leaderboard[x]["YEAR"],
                 "awayPowerConference": leaderboard[x]["AWAY_POWER_CONFERENCE"],
                 "homePowerConference": leaderboard[x]["HOME_POWER_CONFERENCE"],
-                "points": leaderboard[x]["POINTS"]
+                "awayRanking": leaderboard[x]["AWAY_RANKING"],
+                "homeRanking": leaderboard[x]["HOME_RANKING"],
+                "points": leaderboard[x]["POINTS"],
+                "correctPicks": leaderboard[x]["NUMBER_OF_CORRECT_PICKS"],
+                "incorrectPicks": leaderboard[x]["NUMBER_OF_INCORRECT_PICKS"]
             }
             camel_cased_list.append(camel_cased_row)
         response_status: tuple = jsonify(camel_cased_list), 200
