@@ -24,8 +24,8 @@ def get_leaderboard() -> tuple:
                 "awayRanking": leaderboard[x]["AWAY_RANKING"],
                 "homeRanking": leaderboard[x]["HOME_RANKING"],
                 "points": leaderboard[x]["POINTS"],
-                "correctPicks": leaderboard[x]["NUMBER_OF_CORRECT_PICKS"],
-                "incorrectPicks": leaderboard[x]["NUMBER_OF_INCORRECT_PICKS"]
+                "correctPicks": leaderboard[x]["CORRECT_PICK"],
+                "incorrectPicks": leaderboard[x]["INCORRECT_PICK"]
             }
             camel_cased_list.append(camel_cased_row)
         response_status: tuple = jsonify(camel_cased_list), 200
