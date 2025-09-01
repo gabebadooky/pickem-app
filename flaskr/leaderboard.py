@@ -15,7 +15,7 @@ def get_leaderboard() -> tuple:
         for x in range(len(leaderboard)):
             camel_cased_row: dict = {
                 "userID": leaderboard[x]["USER_ID"],
-                "username": leaderboard[x]["USERNAME"],
+                "displayName": leaderboard[x]["DISPLAY_NAME"],
                 "week": leaderboard[x]["WEEK"],
                 "league": leaderboard[x]["LEAGUE"],
                 "year": leaderboard[x]["YEAR"],
