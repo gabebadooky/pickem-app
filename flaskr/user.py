@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify, request
+from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from . import mysql_db
 
@@ -139,6 +140,33 @@ def update_user_notification_preference() -> tuple:
     return response_status
 
 
+@bp.post("/update-display-name")
+@jwt_required()
+def update_user_notification_preference() -> tuple:
+    """
+    Body Example:
+    [
+        {
+            "userID": <int>, (REQUIRED)
+            "displayName": <str> (REQUIRED)
+        }
+    ]
+    """
+    data = request.json
+    current_user = int(get_jwt_identity())
+    if current_user != data["userID"]:
+        response_status = jsonify({"error": "Cannot update another user's display name!"})
+    else:
+        try:
+            procedure_output: str = sql_update_user_display_name(data)
+            if procedure_output == "Success":
+                response_status: tuple = jsonify(message = "Success"), 201
+            else:
+                response_status: tuple = jsonify({"error": "Notification Preference not updated", "message": procedure_output})
+        except Exception as e:
+            response_status: tuple = jsonify({"error": "Notification Preference not updated", "message": e}), 400
+    return response_status
+
 
 def sql_update_user_email(data: dict) -> str:
     user_id: int = data["userID"]
@@ -163,7 +191,15 @@ def sql_update_user_favorite_team(data: dict) -> str:
 
 def sql_update_user_notification_preference(data: dict) -> str:
     user_id: int = data["userID"]
-    favorite_team: str = data["notificationPreference"]
-    sql_statement: str = f"CALL PROC_UPDATE_USER_NOTIFICATION_PREFERENCE('{user_id}', '{favorite_team}', @status);"
+    notification_preference: str = data["notificationPreference"]
+    sql_statement: str = f"CALL PROC_UPDATE_USER_NOTIFICATION_PREFERENCE('{user_id}', '{notification_preference}', @status);"
     procedure_output: str = mysql_db.execute_proc(sql_statement)
     return procedure_output
+
+def sql_update_user_display_name(data: dict) -> str:
+    user_id: int = data["userID"]
+    display_name: str = data["displayName"]
+    sql_statement: str = f"CALL PROC_UPDATE_USER_DISPLAY_NAME('{user_id}', '{display_name}', @status);"
+    procedure_output: str = mysql_db.execute_proc(sql_statement)
+    return procedure_output
+
