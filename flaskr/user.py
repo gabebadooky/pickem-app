@@ -142,7 +142,7 @@ def update_user_notification_preference() -> tuple:
 
 @bp.post("/update-display-name")
 @jwt_required()
-def update_user_notification_preference() -> tuple:
+def update_user_display_name() -> tuple:
     """
     Body Example:
     [
