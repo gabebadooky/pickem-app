@@ -30,7 +30,7 @@ def get_user_properties(user_id) -> tuple:
     return response_status
 
 
-@bp.get("/ids")
+@bp.get("/all")
 def get_all_users() -> tuple:
     try:
         users: list = mysql_db.call_view("SELECT * FROM GET_USER_IDS_VW;")
@@ -38,7 +38,12 @@ def get_all_users() -> tuple:
         for user in users:
             camel_cased_user: dict = {
                 "userID": user["USER_ID"],
-                "displayName": user["DISPLAY_NAME"]
+                "username": user["USERNAME"],
+                "displayName": user["DISPLAY_NAME"],
+                "favoriteTeam": user["FAVORITE_TEAM"],
+                "notificationPreference": user["NOTIFICATION_PREF"],
+                "emailAddress": user["EMAIL_ADDRESS"],
+                "phone": user["PHONE"]
             }
             camel_cased_list.append(camel_cased_user)
         response_status = jsonify(camel_cased_list), 200
