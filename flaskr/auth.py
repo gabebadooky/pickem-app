@@ -110,7 +110,7 @@ def authenticate_user(data: dict) -> tuple:
         if user is None:
             response_status: dict = jsonify({"error": "Not Found", "message": "No users found associated to the provided username."}), 406
         elif check_password_hash(user["PWDHASH"], data["password"]):
-            access_token: str = create_access_token(identity=str(user["USER_ID"]), expires_delta=timedelta(hours=2))
+            access_token: str = create_access_token(identity=str(user["USER_ID"]), expires_delta=timedelta(days=14))
             response_status: tuple = jsonify(access_token=access_token), 200
         else:
             response_status: tuple = ({"error": "Incorrect username or password", "message": "Incorrect Username or Password"}), 406
