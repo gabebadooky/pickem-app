@@ -54,7 +54,7 @@ def get_all_users() -> tuple:
 
 
 @bp.get("/ids")
-def get_all_users() -> tuple:
+def get_users_ids() -> tuple:
     try:
         users: list = mysql_db.call_view("SELECT * FROM GET_USER_IDS_VW;")
         camel_cased_list: list = []
