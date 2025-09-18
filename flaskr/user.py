@@ -51,6 +51,29 @@ def get_all_users() -> tuple:
         response: dict = jsonify({"error": "Request Error", "message": f"{e}"})
         response_status: tuple = response, 400
     return response_status
+
+
+@bp.get("/ids")
+def get_all_users() -> tuple:
+    try:
+        users: list = mysql_db.call_view("SELECT * FROM GET_USER_IDS_VW;")
+        camel_cased_list: list = []
+        for user in users:
+            camel_cased_user: dict = {
+                "userID": user["USER_ID"],
+                "username": user["USERNAME"],
+                "displayName": user["DISPLAY_NAME"],
+                "favoriteTeam": user["FAVORITE_TEAM"],
+                "notificationPreference": user["NOTIFICATION_PREF"],
+                "emailAddress": user["EMAIL_ADDRESS"],
+                "phone": user["PHONE"]
+            }
+            camel_cased_list.append(camel_cased_user)
+        response_status = jsonify(camel_cased_list), 200
+    except Exception as e:
+        response: dict = jsonify({"error": "Request Error", "message": f"{e}"})
+        response_status: tuple = response, 400
+    return response_status
             
 
 @bp.post("/update-email")
