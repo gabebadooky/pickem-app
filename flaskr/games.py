@@ -168,7 +168,7 @@ def get_week_games(week):
 @bp.get("/team/<team_id>")
 def get_team_games(team_id):
     try:
-        sql_statement: str = f"SELECT * FROM GET_GAMES_VW WHERE AWAY_TEAM_ID = {team_id} OR HOME_TEAM_ID = {team_id} ORDER BY DATE, TIME, LEAGUE;"
+        sql_statement: str = f"SELECT * FROM GET_GAMES_VW WHERE AWAY_TEAM_ID = '{team_id}' OR HOME_TEAM_ID = '{team_id}' ORDER BY DATE, TIME, LEAGUE;"
         games: list = mysql_db.call_view(sql_statement)
 
         if len(games) == 0:
