@@ -20,7 +20,8 @@ def get_user_properties(user_id) -> tuple:
                 "favoriteTeam": user["FAVORITE_TEAM"],
                 "notificationPreference": user["NOTIFICATION_PREF"],
                 "emailAddress": user["EMAIL_ADDRESS"],
-                "phone": user["PHONE"]
+                "phone": user["PHONE"],
+                "defaultGameMode": user["DEFAULT_GAME_MODE"]
             }
             response_status: tuple = jsonify(camel_cased_user), 200
     except Exception as e:
@@ -43,7 +44,8 @@ def get_all_users() -> tuple:
                 "favoriteTeam": user["FAVORITE_TEAM"],
                 "notificationPreference": user["NOTIFICATION_PREF"],
                 "emailAddress": user["EMAIL_ADDRESS"],
-                "phone": user["PHONE"]
+                "phone": user["PHONE"],
+                "defaultGameMode": user["DEFAULT_GAME_MODE"]
             }
             camel_cased_list.append(camel_cased_user)
         response_status = jsonify(camel_cased_list), 200
@@ -191,6 +193,34 @@ def update_user_display_name() -> tuple:
     return response_status
 
 
+@bp.post("/update-default-game-mode")
+@jwt_required()
+def update_user_default_game_mode() -> tuple:
+    """
+    Body Example:
+    [
+        {
+            "userID": <int>, (REQUIRED)
+            "defaultGameMode": <str> (REQUIRED)
+        }
+    ]
+    """
+    data = request.json
+    current_user = int(get_jwt_identity())
+    if current_user != data["userID"]:
+        response_status = jsonify({"error": "Cannot update another user's default game mode!"})
+    else:
+        try:
+            procedure_output: str = sql_update_user_default_game_mode(data)
+            if procedure_output == "Success":
+                response_status: tuple = jsonify(message = "Success"), 201
+            else:
+                response_status: tuple = jsonify({"error": "Default Game Mode not updated", "message": procedure_output})
+        except Exception as e:
+            response_status: tuple = jsonify({"error": "Default Game Mode not updated", "message": e}), 400
+    return response_status
+
+
 def sql_update_user_email(data: dict) -> str:
     user_id: int = data["userID"]
     email_address: str = data["emailAddress"]
@@ -226,3 +256,9 @@ def sql_update_user_display_name(data: dict) -> str:
     procedure_output: str = mysql_db.execute_proc(sql_statement)
     return procedure_output
 
+def sql_update_user_default_game_mode(data: dict) -> str:
+    user_id: int = data["userID"]
+    default_game_Mode: str = data["defaultGameMode"]
+    sql_statement: str = f"CALL PROC_UPDATE_USER_DEFAULT_GAME_MODE('{user_id}', '{default_game_Mode}', @status);"
+    procedure_output: str = mysql_db.execute_proc(sql_statement)
+    return procedure_output
