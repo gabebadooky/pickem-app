@@ -149,6 +149,9 @@ def concatenate_create_user_sql(data: dict) -> str:
         password: str = "" # OAUTH
     else:
         password: str = data['password']
+    
+    if ("displayName" not in data):
+        displayName: str = data["username"]
 
     if ("favoriteTeam" not in data):
         favoriteTeam: str = "NULL"
@@ -172,7 +175,8 @@ def concatenate_create_user_sql(data: dict) -> str:
 
     sql_statement: str = (f"""CALL PROC_CREATE_USER(
         '{data["username"]}',
-        '{generate_password_hash(password, "pbkdf2:sha256", 16)}', 
+        '{generate_password_hash(password, "pbkdf2:sha256", 16)}',
+        {displayName}
         {favoriteTeam}, 
         {notificationPreference},
         {emailAddress},
