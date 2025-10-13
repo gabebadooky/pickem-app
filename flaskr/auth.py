@@ -152,9 +152,9 @@ def concatenate_create_user_sql(data: dict) -> str:
         password: str = data['password']
     
     if ("displayName" not in data):
-        displayName: str = data["username"]
+        displayName: str = f"'{data['username']}'"
     else:
-        displayName: str = data["displayName"]
+        displayName: str = f"'{data['displayName']}'"
 
     if ("favoriteTeam" not in data):
         favoriteTeam: str = "NULL"
