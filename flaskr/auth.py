@@ -31,6 +31,7 @@ def register() -> tuple:
         {
             "username": <str>, (REQUIRED)
             "password": <str>, (REQUIRED)
+            "displayName": <str>, (optional)
             "favoriteTeam": <str>, (optional)
             "notificationPreference": <str>, (optional)
             "emailAddress": <str>, (optional)
@@ -152,6 +153,8 @@ def concatenate_create_user_sql(data: dict) -> str:
     
     if ("displayName" not in data):
         displayName: str = data["username"]
+    else:
+        displayName: str = data["displayName"]
 
     if ("favoriteTeam" not in data):
         favoriteTeam: str = "NULL"
